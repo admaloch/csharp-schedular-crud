@@ -1,0 +1,98 @@
+# Build Folders
+bin/
+obj/
+
+# Visual Studio workspace files
+.vs/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider IDE files
+.idea/
+
+# Visual Studio Code files
+.vscode/
+
+# Log files
+*.log
+
+# Packages
+*.nupkg
+*.snupkg
+*.nuspec
+
+# NuGet
+*.psmdcp
+*.pdb
+
+# Windows thumbnail cache files
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# OS generated files
+.DS_Store
+
+# Recycle Bin used by Windows
+$RECYCLE.BIN/
+
+# Resharper files
+_ReSharper*/
+
+# DotCover files
+*.dotCover
+
+# Others
+*.cache
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlh
+*.tli
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+*.etl
+*.userprefs
+*.ide
+
+# Windows image file caches
+*.wmdb
+
+# Backup & report files
+*.bak
+*.Backup
+*.bkp
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# Publish Web Output
+*.Publish.xml
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Windows Installer files
+*.msi
+*.cab
+*.msm
+*.msp
