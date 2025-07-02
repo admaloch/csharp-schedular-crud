@@ -96,3 +96,7 @@ _ReSharper*/
 *.cab
 *.msm
 *.msp
+
+#nuget
+packages/
+
