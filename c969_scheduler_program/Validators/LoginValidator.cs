@@ -1,6 +1,7 @@
 ﻿using c969_scheduler_program.Models;
 using c969_scheduler_program.Utils; // for ValidationUtils, DBUtils, CurrentUser
 using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -24,7 +25,7 @@ namespace c969_scheduler_program.Validators
             bool usernameValid = ValidationUtils.SetValidationState(!string.IsNullOrWhiteSpace(username), usernameTxt);
             if (!usernameValid)
             {
-                errors.Add("Username is required.");
+                errors.Add("Username is required\nSe requiere nombre de usuario.");
                 isValid = false;
             }
 
@@ -33,7 +34,7 @@ namespace c969_scheduler_program.Validators
             bool passwordValid = ValidationUtils.SetValidationState(passwordNotEmpty, passwordTxt);
             if (!passwordNotEmpty)
             {
-                errors.Add("Password is required.");
+                errors.Add("Password is required\nSe requiere contraseña.");
                 isValid = false;
             }
             else
@@ -41,14 +42,14 @@ namespace c969_scheduler_program.Validators
                 // Additional rules if not empty
                 if (password.Length < 6)
                 {
-                    errors.Add("Password must be at least 6 characters long.");
+                    errors.Add("Password must be at least 6 characters long\nLa contraseña debe tener al menos 6 caracteres.");
                     passwordValid = false;
                     isValid = false;
                 }
 
                 if (!password.Any(char.IsLetter) || !password.Any(char.IsDigit))
                 {
-                    errors.Add("Password must contain both letters and numbers.");
+                    errors.Add("Password must contain both letters and numbers\nLa contraseña debe contener letras y números.");
                     passwordValid = false;
                     isValid = false;
                 }
@@ -79,24 +80,24 @@ namespace c969_scheduler_program.Validators
                         {
                             int userId = reader.GetInt32("userId");
                             string userName = reader.GetString("userName");
-                            CurrentUser.SetUser(userId, userName); 
+                            CurrentUser.SetUser(userId, userName);
 
-                            return (true, "Login successful.");
+                            return (true, "Login successful\nInicio de sesión exitoso.");
                         }
                         else
                         {
-                            return (false, "Incorrect username or password, or account inactive.");
+                            return (false, "Incorrect username or password, or account inactive\nNombre de usuario o contraseña incorrectos, o cuenta inactiva.");
                         }
                     }
                 }
             }
             catch (MySqlException ex)
             {
-                return (false, "Database connection error: " + ex.Message);
+                return (false, "Database connection error: " + ex.Message + "\nError de conexión con la base de datos.");
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                return (false, "Login error: " + ex.Message);
+                return (false, "Login error: " + ex.Message + "\nError de inicio de sesión.");
             }
             finally
             {
@@ -104,5 +105,6 @@ namespace c969_scheduler_program.Validators
             }
         }
     }
+
 
 }
