@@ -25,7 +25,7 @@ namespace c969_scheduler_program.Utils
                 conn.Close();
         }
 
-        public static (bool isSuccess, string message) ValidateLogin(string username, string password)
+        public static (bool isSuccess, string message) LoginUser(string username, string password)
         {
             try
             {

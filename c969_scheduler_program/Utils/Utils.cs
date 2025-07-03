@@ -5,9 +5,9 @@ namespace c969_scheduler_program.Utils
 {
     internal class Utilities
     {
-        public static bool IsInputEmpty(TextBox input)
+        public static bool IsStringEmpty(string str)
         {
-            return string.IsNullOrWhiteSpace(input.Text);
+            return !string.IsNullOrWhiteSpace(str);
         }
 
     }

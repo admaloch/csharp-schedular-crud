@@ -1,17 +1,14 @@
-﻿
+﻿using System.Windows.Forms;
 using System.Drawing;
-using System.Windows.Forms;
-
-
 
 namespace c969_scheduler_program.Utils
 {
-    internal class ValidationUtils
+    public static class ValidationUtils
     {
-        public static bool SetValidationState(bool condition, TextBox control)
+        public static bool SetValidationState(bool isValid, TextBox input)
         {
-            control.BackColor = condition ? Color.White : Color.LightCoral;
-            return condition;
+            input.BackColor = isValid ? Color.White : Color.LightPink;
+            return isValid;
         }
     }
 }

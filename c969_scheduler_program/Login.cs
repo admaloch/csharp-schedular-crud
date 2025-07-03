@@ -1,10 +1,14 @@
 ﻿using c969_scheduler_program.Utils;
+using c969_scheduler_program.Validators;
+
 using MySql.Data.MySqlClient;
+using Mysqlx;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 
 
@@ -77,26 +81,26 @@ namespace c969_scheduler_program
 
         private void loginBtn_Click(object sender, EventArgs e)
         {
-            var (isValid, errorMessage) = ValidateSharedInputs();
-            if (!isValid)
+
+            var (isFormValid, formErrors) = LoginValidator.Validate(usernameTxt, passwordTxt);//validate form
+            if(!isFormValid)
             {
-                MessageBox.Show(errorMessage, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(string.Join("\n", formErrors), "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            string username = usernameTxt.Text.Trim();
-            string password = passwordTxt.Text.Trim();
-
-            var (isSuccess, message) = DBUtils.ValidateLogin(username, password);
-
-            MessageBox.Show(message);
-
-            if (isSuccess)
+            var (isUserAuthenticated, loginMsg) = DBUtils.LoginUser(usernameTxt.Text, passwordTxt.Text);//login to db
+            MessageBox.Show(string.Join("\n", loginMsg), "Validation Message", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            if (!isUserAuthenticated)
             {
-                this.Hide();
-                Dashboard frm = new Dashboard();
-                frm.Show(); 
+                return;
             }
+
+            this.Hide();//if no issues with form validaiton or db auth, login and go to dashboard
+            Dashboard frm = new Dashboard();
+            frm.FormClosed += (s, args) => this.Close(); // 💡 closes login form when dashboard closes
+
+            frm.Show();
 
         }
 

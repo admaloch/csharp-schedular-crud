@@ -16,7 +16,8 @@ namespace c969_scheduler_program
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Login());
+            Login loginForm = new Login();
+            Application.Run(loginForm);
         }
     }
 }
