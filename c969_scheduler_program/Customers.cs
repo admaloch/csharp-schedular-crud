@@ -54,5 +54,16 @@ namespace c969_scheduler_program
             }
         }
 
+        private void addBtn_Click(object sender, EventArgs e)
+        {
+            AddCustomer frm = new AddCustomer();
+            frm.Show();
+        }
+
+        private void modifyBtn_Click(object sender, EventArgs e)
+        {
+            ModifyCustomer frm = new ModifyCustomer();
+            frm.Show();
+        }
     }
 }

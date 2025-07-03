@@ -62,6 +62,7 @@
             this.modifyBtn.TabIndex = 18;
             this.modifyBtn.Text = "Modify";
             this.modifyBtn.UseVisualStyleBackColor = true;
+            this.modifyBtn.Click += new System.EventHandler(this.modifyBtn_Click);
             // 
             // addBtn
             // 
@@ -71,6 +72,7 @@
             this.addBtn.TabIndex = 17;
             this.addBtn.Text = "Add";
             this.addBtn.UseVisualStyleBackColor = true;
+            this.addBtn.Click += new System.EventHandler(this.addBtn_Click);
             // 
             // deleteBtn
             // 
