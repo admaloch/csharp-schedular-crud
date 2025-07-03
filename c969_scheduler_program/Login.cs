@@ -1,13 +1,12 @@
-﻿using c969_scheduler_program.Models;
-using c969_scheduler_program.Utils;
+﻿
 using c969_scheduler_program.Validators;
+using c969_scheduler_program.Utils;
+
 using System;
-using System.Collections.Generic;
-using System.Drawing;
+
 using System.Globalization;
-using System.Linq;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using c969_scheduler_program.Models;
 
 
 
@@ -61,6 +60,7 @@ namespace c969_scheduler_program
             }
 
             // Step 3: Open dashboard, close login when dashboard closes
+            Logger.LogLogin(CurrentUser.UserName);
             this.Hide();
             Dashboard frm = new Dashboard();
             frm.FormClosed += (s, args) => this.Close(); // Closes login when dashboard exits
