@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using c969_scheduler_program.Models;
+using c969_scheduler_program.Utils;
+using System;
 using System.Windows.Forms;
 
 namespace c969_scheduler_program
@@ -15,6 +10,13 @@ namespace c969_scheduler_program
         public Dashboard()
         {
             InitializeComponent();
+            OnDashboardLoad();
+        }
+
+        private void OnDashboardLoad()
+        {
+            Utilities.UpdateRegionAndTimeZoneLabels(timeZoneLbl, regionLbl);
+            usernameLbl.Text = $"Current user: {CurrentUser.UserName}";
         }
     }
 }

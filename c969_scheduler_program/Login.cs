@@ -20,20 +20,18 @@ namespace c969_scheduler_program
         {
             InitializeComponent();
             this.Load += Login_Load;
+            this.Shown += Login_Shown;
         }
-        public void Login_Load(object sender, EventArgs e) // add parameters here
+        private void Login_Load(object sender, EventArgs e) // add parameters here
         {
             usernameTxt.TextChanged += SharedInputChanged; // Fix: attach to TextChanged event (not += a method to Text)
             passwordTxt.TextChanged += SharedInputChanged;
-            string localTimeZone = TimeZoneInfo.Local.Id;
-            string region = RegionInfo.CurrentRegion.EnglishName;
 
-            timeZoneLbl.Text = $"Timezone: {localTimeZone}";
-            regionLbl.Text = $"Region: {region}";
+            Utilities.UpdateRegionAndTimeZoneLabels(timeZoneLbl, regionLbl);//label the inputs with region and timezone
             LoginValidator.Validate(usernameTxt, passwordTxt);
         }
 
-        public void SharedInputChanged(object sender, EventArgs e)
+        private void SharedInputChanged(object sender, EventArgs e)
         {
             LoginValidator.Validate(usernameTxt, passwordTxt);
         }
@@ -66,6 +64,31 @@ namespace c969_scheduler_program
             frm.FormClosed += (s, args) => this.Close(); // Closes login when dashboard exits
             frm.Show();
         }
+
+        private void Login_Shown(object sender, EventArgs e)
+        {
+            #if DEBUG
+            // Auto-login user for dev mode
+            string testUsername = "jdoe";
+            string testPassword = "pass123";
+
+            var (isAuthenticated, message) = LoginValidator.TryLogin(testUsername, testPassword);
+
+            if (isAuthenticated)
+            {
+                Logger.LogLogin(CurrentUser.UserName);
+                this.Hide();
+                Dashboard dashboard = new Dashboard();
+                dashboard.FormClosed += (s, args) => this.Close();
+                dashboard.Show();
+            }
+            else
+            {
+                MessageBox.Show("Auto-login failed: " + message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            #endif
+        }
+
 
 
         private void exitBtn_Click(object sender, EventArgs e)
