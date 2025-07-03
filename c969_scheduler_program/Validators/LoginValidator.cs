@@ -1,16 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using c969_scheduler_program.Models;
+using c969_scheduler_program.Utils; // for ValidationUtils, DBUtils, CurrentUser
+using MySql.Data.MySqlClient;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using c969_scheduler_program.Utils;
 
 namespace c969_scheduler_program.Validators
 {
+
+
     public static class LoginValidator
     {
+        // Validate the form inputs only (UI validation)
         public static (bool IsValid, List<string> Errors) Validate(TextBox usernameTxt, TextBox passwordTxt)
         {
             var errors = new List<string>();
-
             bool isValid = true;
 
             string username = usernameTxt.Text;
@@ -55,5 +59,50 @@ namespace c969_scheduler_program.Validators
 
             return (isValid, errors);
         }
+
+        // Check credentials against DB, set CurrentUser on success
+        public static (bool IsSuccess, string Message) TryLogin(string username, string password)
+        {
+            try
+            {
+                DBUtils.OpenConnection();
+
+                string query = "SELECT userId, userName FROM user WHERE userName = @username AND password = @password AND active = 1";
+                using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", password);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            int userId = reader.GetInt32("userId");
+                            string userName = reader.GetString("userName");
+                            CurrentUser.SetUser(userId, userName); 
+
+                            return (true, "Login successful.");
+                        }
+                        else
+                        {
+                            return (false, "Incorrect username or password, or account inactive.");
+                        }
+                    }
+                }
+            }
+            catch (MySqlException ex)
+            {
+                return (false, "Database connection error: " + ex.Message);
+            }
+            catch (System.Exception ex)
+            {
+                return (false, "Login error: " + ex.Message);
+            }
+            finally
+            {
+                DBUtils.CloseConnection();
+            }
+        }
     }
+
 }

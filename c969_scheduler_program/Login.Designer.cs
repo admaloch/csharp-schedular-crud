@@ -36,13 +36,15 @@
             this.passwordTxt = new System.Windows.Forms.TextBox();
             this.loginBtn = new System.Windows.Forms.Button();
             this.exitBtn = new System.Windows.Forms.Button();
+            this.regionLbl = new System.Windows.Forms.Label();
+            this.timeZoneLbl = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(60, 33);
+            this.label1.Location = new System.Drawing.Point(81, 49);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(231, 55);
             this.label1.TabIndex = 0;
@@ -52,7 +54,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(89, 88);
+            this.label2.Location = new System.Drawing.Point(108, 166);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(170, 31);
             this.label2.TabIndex = 1;
@@ -60,7 +62,7 @@
             // 
             // usernameTxt
             // 
-            this.usernameTxt.Location = new System.Drawing.Point(133, 139);
+            this.usernameTxt.Location = new System.Drawing.Point(152, 217);
             this.usernameTxt.Name = "usernameTxt";
             this.usernameTxt.Size = new System.Drawing.Size(158, 20);
             this.usernameTxt.TabIndex = 2;
@@ -69,7 +71,7 @@
             // 
             this.userLbl.AutoSize = true;
             this.userLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.userLbl.Location = new System.Drawing.Point(51, 140);
+            this.userLbl.Location = new System.Drawing.Point(70, 218);
             this.userLbl.Name = "userLbl";
             this.userLbl.Size = new System.Drawing.Size(76, 16);
             this.userLbl.TabIndex = 3;
@@ -79,7 +81,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(60, 183);
+            this.label3.Location = new System.Drawing.Point(79, 249);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(67, 16);
             this.label3.TabIndex = 5;
@@ -87,14 +89,14 @@
             // 
             // passwordTxt
             // 
-            this.passwordTxt.Location = new System.Drawing.Point(133, 182);
+            this.passwordTxt.Location = new System.Drawing.Point(152, 248);
             this.passwordTxt.Name = "passwordTxt";
             this.passwordTxt.Size = new System.Drawing.Size(158, 20);
             this.passwordTxt.TabIndex = 4;
             // 
             // loginBtn
             // 
-            this.loginBtn.Location = new System.Drawing.Point(216, 220);
+            this.loginBtn.Location = new System.Drawing.Point(235, 283);
             this.loginBtn.Name = "loginBtn";
             this.loginBtn.Size = new System.Drawing.Size(75, 23);
             this.loginBtn.TabIndex = 6;
@@ -104,7 +106,7 @@
             // 
             // exitBtn
             // 
-            this.exitBtn.Location = new System.Drawing.Point(216, 249);
+            this.exitBtn.Location = new System.Drawing.Point(235, 312);
             this.exitBtn.Name = "exitBtn";
             this.exitBtn.Size = new System.Drawing.Size(75, 23);
             this.exitBtn.TabIndex = 7;
@@ -112,11 +114,33 @@
             this.exitBtn.UseVisualStyleBackColor = true;
             this.exitBtn.Click += new System.EventHandler(this.exitBtn_Click);
             // 
+            // regionLbl
+            // 
+            this.regionLbl.AutoSize = true;
+            this.regionLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.regionLbl.Location = new System.Drawing.Point(110, 114);
+            this.regionLbl.Name = "regionLbl";
+            this.regionLbl.Size = new System.Drawing.Size(166, 20);
+            this.regionLbl.TabIndex = 8;
+            this.regionLbl.Text = "Region: United States";
+            // 
+            // timeZoneLbl
+            // 
+            this.timeZoneLbl.AutoSize = true;
+            this.timeZoneLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeZoneLbl.Location = new System.Drawing.Point(78, 134);
+            this.timeZoneLbl.Name = "timeZoneLbl";
+            this.timeZoneLbl.Size = new System.Drawing.Size(247, 20);
+            this.timeZoneLbl.TabIndex = 9;
+            this.timeZoneLbl.Text = "TimeZone: Central Standard Time";
+            // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(360, 330);
+            this.ClientSize = new System.Drawing.Size(397, 380);
+            this.Controls.Add(this.timeZoneLbl);
+            this.Controls.Add(this.regionLbl);
             this.Controls.Add(this.exitBtn);
             this.Controls.Add(this.loginBtn);
             this.Controls.Add(this.label3);
@@ -142,6 +166,8 @@
         private System.Windows.Forms.TextBox passwordTxt;
         private System.Windows.Forms.Button loginBtn;
         private System.Windows.Forms.Button exitBtn;
+        private System.Windows.Forms.Label regionLbl;
+        private System.Windows.Forms.Label timeZoneLbl;
     }
 }
 
