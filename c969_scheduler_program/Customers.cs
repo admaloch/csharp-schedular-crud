@@ -15,16 +15,18 @@ namespace c969_scheduler_program
             LoadCustomerData();
             ConfigureCustomerDGV();
         }
-        private void LoadCustomerData()
+        public void LoadCustomerData()
         {
             List<Customer> customers = Customer.GetAllCustomers();
             customerDGV.DataSource = customers;
-            customerDGV.Columns["CreateDate"].Visible = false;
-            customerDGV.Columns["CreatedBy"].Visible = false;
         }
+
+
 
         private void ConfigureCustomerDGV()
         {
+            customerDGV.Columns["CreateDate"].Visible = false;
+            customerDGV.Columns["CreatedBy"].Visible = false;
             customerDGV.ReadOnly = true;
             customerDGV.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             customerDGV.RowHeadersVisible = false;
@@ -56,8 +58,13 @@ namespace c969_scheduler_program
 
         private void addBtn_Click(object sender, EventArgs e)
         {
-            AddCustomer frm = new AddCustomer();
-            frm.Show();
+            var addForm = new AddCustomer();
+            var result = addForm.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                LoadCustomerData(); // Refresh after a successful add
+            }
         }
 
         private void modifyBtn_Click(object sender, EventArgs e)

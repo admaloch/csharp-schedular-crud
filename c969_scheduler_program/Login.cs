@@ -67,10 +67,10 @@ namespace c969_scheduler_program
 
         private void Login_Shown(object sender, EventArgs e)
         {
-            #if DEBUG
+#if DEBUG
             // Auto-login user for dev mode
-            string testUsername = "jdoe";
-            string testPassword = "pass123";
+            string testUsername = "echen";
+            string testPassword = "pw12345";
 
             var (isAuthenticated, message) = LoginValidator.TryLogin(testUsername, testPassword);
 
@@ -86,7 +86,7 @@ namespace c969_scheduler_program
             {
                 MessageBox.Show("Auto-login failed: " + message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            #endif
+#endif
         }
 
 
