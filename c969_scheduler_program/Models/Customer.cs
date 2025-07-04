@@ -170,7 +170,6 @@ namespace c969_scheduler_program.Models
             return customer;
         }
 
-
         public static bool DeleteCustomer(int customerId)
         {
             try
@@ -195,6 +194,78 @@ namespace c969_scheduler_program.Models
                 DBUtils.CloseConnection();
             }
         }
+
+        public static bool UpdateCustomer(Customer customer)
+        {
+            try
+            {
+                DBUtils.OpenConnection();
+
+                string query = @"
+                    UPDATE Customer
+                    SET customerName = @customerName,
+                        active = @isActive,
+                        lastUpdate = NOW(),
+                        lastUpdateBy = @lastUpdateBy
+                    WHERE customerId = @customerId;
+
+                    UPDATE Address
+                    SET address = @address,
+                        address2 = @address2,
+                        postalCode = @postalCode,
+                        phone = @phone,
+                        lastUpdate = NOW(),
+                        lastUpdateBy = @lastUpdateBy
+                    WHERE addressId = @addressId;
+
+                    UPDATE City
+                    SET city = @city,
+                        lastUpdate = NOW(),
+                        lastUpdateBy = @lastUpdateBy
+                    WHERE cityId = @cityId;
+
+                    UPDATE Country
+                    SET country = @country,
+                        lastUpdate = NOW(),
+                        lastUpdateBy = @lastUpdateBy
+                    WHERE countryId = @countryId;
+        ";
+
+                using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@customerId", customer.CustomerId);
+                    cmd.Parameters.AddWithValue("@customerName", customer.CustomerName);
+                    cmd.Parameters.AddWithValue("@isActive", customer.IsActive);
+                    cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+
+                    cmd.Parameters.AddWithValue("@addressId", customer.AddressId);
+                    cmd.Parameters.AddWithValue("@address", customer.Address);
+                    cmd.Parameters.AddWithValue("@address2", customer.Address2);
+                    cmd.Parameters.AddWithValue("@postalCode", customer.PostalCode);
+                    cmd.Parameters.AddWithValue("@phone", customer.Phone);
+
+                    cmd.Parameters.AddWithValue("@cityId", customer.CityId);
+                    cmd.Parameters.AddWithValue("@city", customer.City);
+
+                    cmd.Parameters.AddWithValue("@countryId", customer.CountryId);
+                    cmd.Parameters.AddWithValue("@country", customer.Country);
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating customer: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                DBUtils.CloseConnection();
+            }
+        }
+
 
         public static bool AddCustomer(Customer customer)
         {

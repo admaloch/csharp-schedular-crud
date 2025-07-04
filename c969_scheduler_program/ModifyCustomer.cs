@@ -49,6 +49,12 @@ namespace c969_scheduler_program
 
         private void submitBtn_Click(object sender, EventArgs e)
         {
+            var (isValidated, formErrors) = CustomerValidator.ValidateCustomer(nameTxt, addressTxt, cityTxt, countryTxt, zipTxt, phoneTxt);
+            if (!isValidated)
+            {
+                MessageBox.Show(string.Join("\n", formErrors), "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
         }
 
