@@ -14,13 +14,16 @@ namespace c969_scheduler_program.Models
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }
         // Address details
+        public int AddressId { get; set; }
         public string Address { get; set; }
         public string Address2 { get; set; }
         public string PostalCode { get; set; }
         public string Phone { get; set; }
         // City and Country details
         public string City { get; set; }
+        public int CityId { get; set; }
         public string Country { get; set; }
+        public int CountryId { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreateDate { get; set; }
         public string CreatedBy { get; set; }
@@ -40,13 +43,17 @@ namespace c969_scheduler_program.Models
                     cu.createdBy,
                     cu.lastUpdate,
                     cu.lastUpdateBy,
+                    cu.addressId,
 
                     a.address,
                     a.address2,
                     a.postalCode,
                     a.phone,
+                    a.cityId,
 
                     ci.city,
+                    ci.countryId,
+
                     co.country
 
                 FROM Customer cu
@@ -84,7 +91,10 @@ namespace c969_scheduler_program.Models
                             Phone = reader.GetString("phone"),
 
                             City = reader.GetString("city"),
-                            Country = reader.GetString("country")
+                            Country = reader.GetString("country"),
+                            AddressId = reader.GetInt32("addressId"),
+                            CityId = reader.GetInt32("cityId"),
+                            CountryId = reader.GetInt32("countryId"),
                         });
                     }
                 }
@@ -110,25 +120,32 @@ namespace c969_scheduler_program.Models
                 DBUtils.OpenConnection();
 
                 string query = @"
-                    SELECT 
-                        cu.customerId,
-                        cu.customerName,
-                        cu.active,
-                        cu.createDate,
-                        cu.createdBy,
-                        cu.lastUpdate,
-                        cu.lastUpdateBy,
-                        a.address,
-                        a.address2,
-                        a.postalCode,
-                        a.phone,
-                        ci.city,
-                        co.country
-                    FROM Customer cu
-                    JOIN Address a ON cu.addressId = a.addressId
-                    JOIN City ci ON a.cityId = ci.cityId
-                    JOIN Country co ON ci.countryId = co.countryId
-                    WHERE cu.customerId = @customerId";
+            SELECT 
+                cu.customerId,
+                cu.customerName,
+                cu.active,
+                cu.createDate,
+                cu.createdBy,
+                cu.lastUpdate,
+                cu.lastUpdateBy,
+
+                a.addressId,
+                a.address,
+                a.address2,
+                a.postalCode,
+                a.phone,
+
+                ci.cityId,
+                ci.city,
+
+                co.countryId,
+                co.country
+
+            FROM Customer cu
+            JOIN Address a ON cu.addressId = a.addressId
+            JOIN City ci ON a.cityId = ci.cityId
+            JOIN Country co ON ci.countryId = co.countryId
+            WHERE cu.customerId = @customerId";
 
                 using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
                 {
@@ -147,11 +164,17 @@ namespace c969_scheduler_program.Models
                                 CreatedBy = reader.GetString("createdBy"),
                                 LastUpdate = reader.GetDateTime("lastUpdate"),
                                 LastUpdateBy = reader.GetString("lastUpdateBy"),
+
+                                AddressId = reader.GetInt32("addressId"),
                                 Address = reader.GetString("address"),
                                 Address2 = reader.GetString("address2"),
                                 PostalCode = reader.GetString("postalCode"),
                                 Phone = reader.GetString("phone"),
+
+                                CityId = reader.GetInt32("cityId"),
                                 City = reader.GetString("city"),
+
+                                CountryId = reader.GetInt32("countryId"),
                                 Country = reader.GetString("country")
                             };
                         }
@@ -176,17 +199,29 @@ namespace c969_scheduler_program.Models
             {
                 DBUtils.OpenConnection();
 
-                string query = "DELETE FROM customer WHERE customerId = @customerId";
-                using (MySqlCommand cmd = new MySqlCommand(query, DBUtils.GetConnection()))
+                // Step 1: Get the addressId linked to the customer
+                int addressId = -1;
+                using (var getCmd = new MySqlCommand("SELECT addressId FROM Customer WHERE customerId = @customerId", DBUtils.GetConnection()))
                 {
-                    cmd.Parameters.AddWithValue("@customerId", customerId);
-                    int rowsAffected = cmd.ExecuteNonQuery();
+                    getCmd.Parameters.AddWithValue("@customerId", customerId);
+                    object result = getCmd.ExecuteScalar();
+                    if (result == null || !int.TryParse(result.ToString(), out addressId))
+                    {
+                        return false;
+                    }
+                }
+
+                // Step 2: Delete the address; the customer will be deleted automatically due to ON DELETE CASCADE
+                using (var delCmd = new MySqlCommand("DELETE FROM Address WHERE addressId = @addressId", DBUtils.GetConnection()))
+                {
+                    delCmd.Parameters.AddWithValue("@addressId", addressId);
+                    int rowsAffected = delCmd.ExecuteNonQuery();
                     return rowsAffected > 0;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error deleting customer: " + ex.Message);
+                MessageBox.Show("Error deleting customer/address: " + ex.Message);
                 return false;
             }
             finally
@@ -200,57 +235,75 @@ namespace c969_scheduler_program.Models
             try
             {
                 DBUtils.OpenConnection();
+                var conn = DBUtils.GetConnection();
 
-                string query = @"
-                    UPDATE Customer
-                    SET customerName = @customerName,
-                        active = @isActive,
-                        lastUpdate = NOW(),
-                        lastUpdateBy = @lastUpdateBy
-                    WHERE customerId = @customerId;
-
-                    UPDATE Address
-                    SET address = @address,
-                        address2 = @address2,
-                        postalCode = @postalCode,
-                        phone = @phone,
-                        lastUpdate = NOW(),
-                        lastUpdateBy = @lastUpdateBy
-                    WHERE addressId = @addressId;
-
-                    UPDATE City
-                    SET city = @city,
-                        lastUpdate = NOW(),
-                        lastUpdateBy = @lastUpdateBy
-                    WHERE cityId = @cityId;
-
-                    UPDATE Country
-                    SET country = @country,
-                        lastUpdate = NOW(),
-                        lastUpdateBy = @lastUpdateBy
-                    WHERE countryId = @countryId;
-        ";
-
-                using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
+                using (var transaction = conn.BeginTransaction())
                 {
-                    cmd.Parameters.AddWithValue("@customerId", customer.CustomerId);
-                    cmd.Parameters.AddWithValue("@customerName", customer.CustomerName);
-                    cmd.Parameters.AddWithValue("@isActive", customer.IsActive);
-                    cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                    // Update Customer
+                    using (var cmd = new MySqlCommand(@"
+                UPDATE Customer
+                SET customerName = @customerName,
+                    active = @isActive,
+                    lastUpdate = NOW(),
+                    lastUpdateBy = @lastUpdateBy
+                WHERE customerId = @customerId;", conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@customerId", customer.CustomerId);
+                        cmd.Parameters.AddWithValue("@customerName", customer.CustomerName);
+                        cmd.Parameters.AddWithValue("@isActive", customer.IsActive);
+                        cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                        cmd.ExecuteNonQuery();
+                    }
 
-                    cmd.Parameters.AddWithValue("@addressId", customer.AddressId);
-                    cmd.Parameters.AddWithValue("@address", customer.Address);
-                    cmd.Parameters.AddWithValue("@address2", customer.Address2);
-                    cmd.Parameters.AddWithValue("@postalCode", customer.PostalCode);
-                    cmd.Parameters.AddWithValue("@phone", customer.Phone);
+                    // Update Address
+                    using (var cmd = new MySqlCommand(@"
+                UPDATE Address
+                SET address = @address,
+                    address2 = @address2,
+                    postalCode = @postalCode,
+                    phone = @phone,
+                    lastUpdate = NOW(),
+                    lastUpdateBy = @lastUpdateBy
+                WHERE addressId = @addressId;", conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@addressId", customer.AddressId);
+                        cmd.Parameters.AddWithValue("@address", customer.Address);
+                        cmd.Parameters.AddWithValue("@address2", customer.Address2);
+                        cmd.Parameters.AddWithValue("@postalCode", customer.PostalCode);
+                        cmd.Parameters.AddWithValue("@phone", customer.Phone);
+                        cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                        cmd.ExecuteNonQuery();
+                    }
 
-                    cmd.Parameters.AddWithValue("@cityId", customer.CityId);
-                    cmd.Parameters.AddWithValue("@city", customer.City);
+                    // Update City
+                    using (var cmd = new MySqlCommand(@"
+                UPDATE City
+                SET city = @city,
+                    lastUpdate = NOW(),
+                    lastUpdateBy = @lastUpdateBy
+                WHERE cityId = @cityId;", conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@cityId", customer.CityId);
+                        cmd.Parameters.AddWithValue("@city", customer.City);
+                        cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                        cmd.ExecuteNonQuery();
+                    }
 
-                    cmd.Parameters.AddWithValue("@countryId", customer.CountryId);
-                    cmd.Parameters.AddWithValue("@country", customer.Country);
+                    // Update Country
+                    using (var cmd = new MySqlCommand(@"
+                UPDATE Country
+                SET country = @country,
+                    lastUpdate = NOW(),
+                    lastUpdateBy = @lastUpdateBy
+                WHERE countryId = @countryId;", conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@countryId", customer.CountryId);
+                        cmd.Parameters.AddWithValue("@country", customer.Country);
+                        cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                        cmd.ExecuteNonQuery();
+                    }
 
-                    cmd.ExecuteNonQuery();
+                    transaction.Commit();
                 }
 
                 return true;

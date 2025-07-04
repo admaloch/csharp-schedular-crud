@@ -27,6 +27,10 @@ namespace c969_scheduler_program
         {
             customerDGV.Columns["CreateDate"].Visible = false;
             customerDGV.Columns["CreatedBy"].Visible = false;
+            customerDGV.Columns["CountryId"].Visible = false;
+            customerDGV.Columns["CityId"].Visible = false;
+            customerDGV.Columns["AddressId"].Visible = false;
+
             customerDGV.ReadOnly = true;
             customerDGV.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             customerDGV.RowHeadersVisible = false;
@@ -82,7 +86,6 @@ namespace c969_scheduler_program
                 MessageBox.Show("Error: Unable to access customer data.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-
 
             var modifyForm = new ModifyCustomer(currCustomer);
             var result = modifyForm.ShowDialog();

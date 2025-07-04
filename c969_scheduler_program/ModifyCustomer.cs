@@ -55,6 +55,38 @@ namespace c969_scheduler_program
                 MessageBox.Show(string.Join("\n", formErrors), "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            MessageBox.Show(
+                $"Customer ID: {currCustomer.CustomerId}\n" +
+                $"Address ID: {currCustomer.AddressId}\n" +
+                $"City ID: {currCustomer.CityId}\n" +
+                $"Country ID: {currCustomer.CountryId}"
+            );
+            Customer updatedCustomer = new Customer
+            {
+                CustomerId = currCustomer.CustomerId,
+                AddressId = currCustomer.AddressId,
+                CityId = currCustomer.CityId,
+                CountryId = currCustomer.CountryId,
+                CustomerName = nameTxt.Text.Trim(),
+                Address = addressTxt.Text.Trim(),
+                Address2 = address2Txt.Text.Trim(),
+                City = cityTxt.Text.Trim(),
+                Country = countryTxt.Text.Trim(),
+                PostalCode = zipTxt.Text.Trim(),
+                Phone = phoneTxt.Text.Trim(),
+                IsActive = activeCheckBox.Checked
+            };
+
+            bool isSuccess = Customer.UpdateCustomer(updatedCustomer);
+            if (!isSuccess)
+            {
+                MessageBox.Show("Failed to update item in DB", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            MessageBox.Show("Customer successfully modified!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            this.DialogResult = DialogResult.OK;
+            this.Close(); // Optional: close form or go back
 
         }
 
