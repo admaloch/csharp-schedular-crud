@@ -69,8 +69,28 @@ namespace c969_scheduler_program
 
         private void modifyBtn_Click(object sender, EventArgs e)
         {
-            ModifyCustomer frm = new ModifyCustomer();
-            frm.Show();
+            if (!Utilities.IsRowSelected(customerDGV))
+            {
+                MessageBox.Show("Please select a customer to modify.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            int customerId = Convert.ToInt32(customerDGV.CurrentRow.Cells["CustomerId"].Value);
+            Customer currCustomer = Customer.GetCustomerById(customerId);
+            if (currCustomer == null)
+            {
+                MessageBox.Show("Error: Unable to access customer data.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+
+            var modifyForm = new ModifyCustomer(currCustomer);
+            var result = modifyForm.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                LoadCustomerData();
+            }
         }
     }
 }

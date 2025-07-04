@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace c969_scheduler_program.Models
 {
-    internal class Customer
+    public class Customer
     {
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }
@@ -100,6 +100,76 @@ namespace c969_scheduler_program.Models
 
             return customers;
         }
+
+        public static Customer GetCustomerById(int customerId)
+        {
+            Customer customer = null;
+
+            try
+            {
+                DBUtils.OpenConnection();
+
+                string query = @"
+                    SELECT 
+                        cu.customerId,
+                        cu.customerName,
+                        cu.active,
+                        cu.createDate,
+                        cu.createdBy,
+                        cu.lastUpdate,
+                        cu.lastUpdateBy,
+                        a.address,
+                        a.address2,
+                        a.postalCode,
+                        a.phone,
+                        ci.city,
+                        co.country
+                    FROM Customer cu
+                    JOIN Address a ON cu.addressId = a.addressId
+                    JOIN City ci ON a.cityId = ci.cityId
+                    JOIN Country co ON ci.countryId = co.countryId
+                    WHERE cu.customerId = @customerId";
+
+                using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@customerId", customerId);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            customer = new Customer
+                            {
+                                CustomerId = reader.GetInt32("customerId"),
+                                CustomerName = reader.GetString("customerName"),
+                                IsActive = reader.GetBoolean("active"),
+                                CreateDate = reader.GetDateTime("createDate"),
+                                CreatedBy = reader.GetString("createdBy"),
+                                LastUpdate = reader.GetDateTime("lastUpdate"),
+                                LastUpdateBy = reader.GetString("lastUpdateBy"),
+                                Address = reader.GetString("address"),
+                                Address2 = reader.GetString("address2"),
+                                PostalCode = reader.GetString("postalCode"),
+                                Phone = reader.GetString("phone"),
+                                City = reader.GetString("city"),
+                                Country = reader.GetString("country")
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error getting customer: " + ex.Message);
+            }
+            finally
+            {
+                DBUtils.CloseConnection();
+            }
+
+            return customer;
+        }
+
 
         public static bool DeleteCustomer(int customerId)
         {
@@ -242,13 +312,7 @@ namespace c969_scheduler_program.Models
             return newCityId;
         }
 
-        public static int InsertAddress(
-            string addressName,
-            string address2,
-            int cityId,
-            string postalCode,
-            string phone,
-            string createdBy)
+        public static int InsertAddress(string addressName, string address2, int cityId, string postalCode, string phone, string createdBy)
         {
             int newAddressId = -1;
 
@@ -339,6 +403,7 @@ namespace c969_scheduler_program.Models
 
             return newCustomerId; // Return the ID of the new customer, or -1 if it failed
         }
+
 
     }
 }
