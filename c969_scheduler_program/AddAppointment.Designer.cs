@@ -30,7 +30,7 @@
         {
             this.exitBtn = new System.Windows.Forms.Button();
             this.submitBtn = new System.Windows.Forms.Button();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.apptDgv = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
             this.dateLbl = new System.Windows.Forms.Label();
             this.urlTxt = new System.Windows.Forms.TextBox();
@@ -51,7 +51,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.durationComboBox = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.apptDgv)).BeginInit();
             this.SuspendLayout();
             // 
             // exitBtn
@@ -73,13 +73,13 @@
             this.submitBtn.UseVisualStyleBackColor = true;
             this.submitBtn.Click += new System.EventHandler(this.submitBtn_Click);
             // 
-            // dataGridView1
+            // apptDgv
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(365, 12);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(407, 423);
-            this.dataGridView1.TabIndex = 27;
+            this.apptDgv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.apptDgv.Location = new System.Drawing.Point(365, 12);
+            this.apptDgv.Name = "apptDgv";
+            this.apptDgv.Size = new System.Drawing.Size(407, 423);
+            this.apptDgv.TabIndex = 27;
             // 
             // label1
             // 
@@ -284,11 +284,11 @@
             this.Controls.Add(this.dateLbl);
             this.Controls.Add(this.exitBtn);
             this.Controls.Add(this.submitBtn);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.apptDgv);
             this.Controls.Add(this.label1);
             this.Name = "AddAppointment";
             this.Text = "AddAppointment";
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.apptDgv)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -298,7 +298,7 @@
 
         private System.Windows.Forms.Button exitBtn;
         private System.Windows.Forms.Button submitBtn;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView apptDgv;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label dateLbl;
         private System.Windows.Forms.TextBox urlTxt;

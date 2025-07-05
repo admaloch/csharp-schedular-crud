@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.monthCalendar1 = new System.Windows.Forms.MonthCalendar();
+            this.monthCalendar = new System.Windows.Forms.MonthCalendar();
             this.addApptBtn = new System.Windows.Forms.Button();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.apptDgv = new System.Windows.Forms.DataGridView();
             this.modApptBtn = new System.Windows.Forms.Button();
             this.deleteApptBtn = new System.Windows.Forms.Button();
             this.exitBtn = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.apptDgv)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -48,11 +48,12 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Appointments";
             // 
-            // monthCalendar1
+            // monthCalendar
             // 
-            this.monthCalendar1.Location = new System.Drawing.Point(58, 82);
-            this.monthCalendar1.Name = "monthCalendar1";
-            this.monthCalendar1.TabIndex = 2;
+            this.monthCalendar.Location = new System.Drawing.Point(58, 82);
+            this.monthCalendar.Name = "monthCalendar";
+            this.monthCalendar.TabIndex = 2;
+            this.monthCalendar.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.monthCalendar_DateChanged);
             // 
             // addApptBtn
             // 
@@ -64,13 +65,13 @@
             this.addApptBtn.UseVisualStyleBackColor = true;
             this.addApptBtn.Click += new System.EventHandler(this.addApptBtn_Click);
             // 
-            // dataGridView1
+            // apptDgv
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(348, 18);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(407, 420);
-            this.dataGridView1.TabIndex = 20;
+            this.apptDgv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.apptDgv.Location = new System.Drawing.Point(348, 18);
+            this.apptDgv.Name = "apptDgv";
+            this.apptDgv.Size = new System.Drawing.Size(407, 420);
+            this.apptDgv.TabIndex = 20;
             // 
             // modApptBtn
             // 
@@ -107,13 +108,13 @@
             this.Controls.Add(this.exitBtn);
             this.Controls.Add(this.deleteApptBtn);
             this.Controls.Add(this.modApptBtn);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.apptDgv);
             this.Controls.Add(this.addApptBtn);
-            this.Controls.Add(this.monthCalendar1);
+            this.Controls.Add(this.monthCalendar);
             this.Controls.Add(this.label1);
             this.Name = "MainAppointments";
             this.Text = "MainAppointments";
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.apptDgv)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -122,9 +123,9 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.MonthCalendar monthCalendar1;
+        private System.Windows.Forms.MonthCalendar monthCalendar;
         private System.Windows.Forms.Button addApptBtn;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView apptDgv;
         private System.Windows.Forms.Button modApptBtn;
         private System.Windows.Forms.Button deleteApptBtn;
         private System.Windows.Forms.Button exitBtn;

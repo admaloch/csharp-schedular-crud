@@ -190,6 +190,52 @@ namespace c969_scheduler_program.Models
             return customer;
         }
 
+        public static List<Customer> GetCustomersByUserId(int userId)
+        {
+            var customers = new List<Customer>();
+
+            try
+            {
+                DBUtils.OpenConnection();
+
+                string query = @"
+            SELECT c.customerId, c.customerName
+            FROM Customer c
+            JOIN Appointment ap ON c.customerId = ap.customerId
+            WHERE ap.userId = @userId
+            GROUP BY c.customerId, c.customerName;
+        ";
+
+                using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            customers.Add(new Customer
+                            {
+                                CustomerId = reader.GetInt32("customerId"),
+                                CustomerName = reader.GetString("customerName")
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading customers: " + ex.Message);
+            }
+            finally
+            {
+                DBUtils.CloseConnection();
+            }
+
+            return customers;
+        }
+
+
         public static bool DeleteCustomer(int customerId)
         {
             try
