@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace c969_scheduler_program
+{
+    public partial class MainAppointments : Form
+    {
+        public MainAppointments()
+        {
+            InitializeComponent();
+        }
+
+        private void addApptBtn_Click(object sender, EventArgs e)
+        {
+            AddAppointment frm = new AddAppointment();
+            frm.Show();
+        }
+    }
+}

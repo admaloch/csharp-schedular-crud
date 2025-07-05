@@ -2,9 +2,6 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace c969_scheduler_program.Models
@@ -257,13 +254,13 @@ namespace c969_scheduler_program.Models
 
                     // Update Address
                     using (var cmd = new MySqlCommand(@"
-                UPDATE Address
-                SET address = @address,
-                    address2 = @address2,
-                    postalCode = @postalCode,
-                    phone = @phone,
-                    lastUpdate = NOW(),
-                    lastUpdateBy = @lastUpdateBy
+                    UPDATE Address
+                    SET address = @address,
+                        address2 = @address2,
+                        postalCode = @postalCode,
+                        phone = @phone,
+                        lastUpdate = NOW(),
+                        lastUpdateBy = @lastUpdateBy
                 WHERE addressId = @addressId;", conn, transaction))
                     {
                         cmd.Parameters.AddWithValue("@addressId", customer.AddressId);

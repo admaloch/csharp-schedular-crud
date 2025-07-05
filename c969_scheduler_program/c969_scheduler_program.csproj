@@ -99,6 +99,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddAppointment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddAppointment.Designer.cs">
+      <DependentUpon>AddAppointment.cs</DependentUpon>
+    </Compile>
     <Compile Include="AddCustomer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -124,6 +130,13 @@
     <Compile Include="Login.Designer.cs">
       <DependentUpon>Login.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainAppointments.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainAppointments.Designer.cs">
+      <DependentUpon>MainAppointments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Appointment.cs" />
     <Compile Include="Models\CurrentUser.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="ModifyCustomer.cs">
@@ -140,6 +153,9 @@
     <Compile Include="Utils\ValidationUtils.cs" />
     <Compile Include="Validators\CustomerValidator.cs" />
     <Compile Include="Validators\LoginValidator.cs" />
+    <EmbeddedResource Include="AddAppointment.resx">
+      <DependentUpon>AddAppointment.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AddCustomer.resx">
       <DependentUpon>AddCustomer.cs</DependentUpon>
     </EmbeddedResource>
@@ -151,6 +167,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainAppointments.resx">
+      <DependentUpon>MainAppointments.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ModifyCustomer.resx">
       <DependentUpon>ModifyCustomer.cs</DependentUpon>

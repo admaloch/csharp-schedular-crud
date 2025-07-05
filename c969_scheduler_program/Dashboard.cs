@@ -24,5 +24,11 @@ namespace c969_scheduler_program
             Customers frm = new Customers();
             frm.Show();
         }
+
+        private void appointmentsBtn_Click(object sender, EventArgs e)
+        {
+            MainAppointments frm = new MainAppointments();
+            frm.Show();
+        }
     }
 }
