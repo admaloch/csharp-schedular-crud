@@ -11,27 +11,19 @@ using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace c969_scheduler_program.Models
 {
-    internal class Appointment
+    public class Appointment
     {
         public int AppointmentId { get; set; }
         public int CustomerId { get; set; }
-        public string CustomerName { get; set; } // Optional for display
-        public int UserId { get; set; }
-
+        public string CustomerName { get; set; }
         public string Title { get; set; }
         public string Type { get; set; }
         public string Description { get; set; }
         public string Location { get; set; }
         public string Contact { get; set; }
         public string Url { get; set; }
-
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
-
-        public DateTime CreateDate { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime LastUpdate { get; set; }
-        public string LastUpdateBy { get; set; }
 
 
         public static List<Appointment> GetAppointmentsForUserByDate(int userId, DateTime date)
@@ -81,7 +73,6 @@ namespace c969_scheduler_program.Models
                                 AppointmentId = reader.GetInt32("appointmentId"),
                                 CustomerId = reader.GetInt32("customerId"),
                                 CustomerName = reader.GetString("customerName"),
-                                UserId = reader.GetInt32("userId"),
                                 Title = reader.GetString("title"),
                                 Type = reader.GetString("type"),
                                 Description = reader.GetString("description"),
@@ -90,10 +81,6 @@ namespace c969_scheduler_program.Models
                                 Url = reader.GetString("url"),
                                 Start = reader.GetDateTime("start"),
                                 End = reader.GetDateTime("end"),
-                                CreateDate = reader.GetDateTime("createDate"),
-                                CreatedBy = reader.GetString("createdBy"),
-                                LastUpdate = reader.GetDateTime("lastUpdate"),
-                                LastUpdateBy = reader.GetString("lastUpdateBy")
                             });
                         }
                     }
@@ -111,6 +98,51 @@ namespace c969_scheduler_program.Models
             return appointments;
         }
 
+        public static bool InsertAppointment(Appointment appt)
+        {
+            try
+            {
+                DBUtils.OpenConnection();
+
+                string query = @"
+            INSERT INTO Appointment (
+                customerId, userId, title, description, location, contact, type, url,
+                start, end, createDate, createdBy, lastUpdate, lastUpdateBy
+            ) VALUES (
+                @customerId, @userId, @title, @description, @location, @contact, @type, @url,
+                @start, @end, NOW(), @createdBy, NOW(), @lastUpdateBy
+            );
+        ";
+
+                using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@customerId", appt.CustomerId);
+                    cmd.Parameters.AddWithValue("@userId", CurrentUser.UserId);
+                    cmd.Parameters.AddWithValue("@title", appt.Title);
+                    cmd.Parameters.AddWithValue("@description", appt.Description);
+                    cmd.Parameters.AddWithValue("@location", appt.Location);
+                    cmd.Parameters.AddWithValue("@contact", appt.Contact);
+                    cmd.Parameters.AddWithValue("@type", appt.Type);
+                    cmd.Parameters.AddWithValue("@url", appt.Url ?? "");
+                    cmd.Parameters.AddWithValue("@start", appt.Start);
+                    cmd.Parameters.AddWithValue("@end", appt.End);
+                    cmd.Parameters.AddWithValue("@createdBy", CurrentUser.UserName);
+                    cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName); // Assuming same user
+                    cmd.ExecuteNonQuery();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error inserting appointment: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                DBUtils.CloseConnection();
+            }
+        }
 
 
     }
