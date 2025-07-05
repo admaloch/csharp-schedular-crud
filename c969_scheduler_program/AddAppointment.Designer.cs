@@ -71,6 +71,7 @@
             this.submitBtn.TabIndex = 29;
             this.submitBtn.Text = "Submit";
             this.submitBtn.UseVisualStyleBackColor = true;
+            this.submitBtn.Click += new System.EventHandler(this.submitBtn_Click);
             // 
             // dataGridView1
             // 

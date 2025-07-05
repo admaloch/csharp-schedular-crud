@@ -151,6 +151,7 @@
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\Utils.cs" />
     <Compile Include="Utils\ValidationUtils.cs" />
+    <Compile Include="Validators\AppointmentValidator.cs" />
     <Compile Include="Validators\CustomerValidator.cs" />
     <Compile Include="Validators\LoginValidator.cs" />
     <EmbeddedResource Include="AddAppointment.resx">

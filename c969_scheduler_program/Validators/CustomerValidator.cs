@@ -1,7 +1,5 @@
 ﻿using c969_scheduler_program.Utils;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -18,7 +16,7 @@ namespace c969_scheduler_program.Validators
                TextBox zipTxt,
                TextBox phoneTxt)
         {
-            
+
             var errors = new List<string>();
             bool isValid = true;
 
