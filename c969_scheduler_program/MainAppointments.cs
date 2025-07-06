@@ -68,5 +68,24 @@ namespace c969_scheduler_program
                 LoadCurrApptDate();
             }
         }
+
+        private void deleteApptBtn_Click(object sender, EventArgs e)
+        {
+            if (!Utilities.IsRowSelected(apptDgv))
+            {
+                MessageBox.Show("Please select a customer to modify.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            int appointmentId = Utilities.GrabDgvRowId(apptDgv);
+            var result = Appointment.DeleteAppointment(appointmentId);
+            if (!result)
+            {
+                MessageBox.Show("Unable to delete appointment.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            MessageBox.Show($"Appointment deleted!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            LoadCurrApptDate();
+
+        }
     }
 }

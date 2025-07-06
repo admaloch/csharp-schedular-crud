@@ -91,6 +91,7 @@
             this.deleteApptBtn.TabIndex = 22;
             this.deleteApptBtn.Text = "Delete selected appointment";
             this.deleteApptBtn.UseVisualStyleBackColor = true;
+            this.deleteApptBtn.Click += new System.EventHandler(this.deleteApptBtn_Click);
             // 
             // exitBtn
             // 

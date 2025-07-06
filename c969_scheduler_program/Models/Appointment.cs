@@ -248,6 +248,34 @@ namespace c969_scheduler_program.Models
             return appointment;
         }
 
+        public static bool DeleteAppointment(int appointmentId)
+        {
+            try
+            {
+                DBUtils.OpenConnection();
+
+                string query = "DELETE FROM appointment WHERE appointmentId = @appointmentId";
+
+                using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@appointmentId", appointmentId);
+                    int affectedRows = cmd.ExecuteNonQuery();
+
+                    return affectedRows > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error deleting appointment: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                DBUtils.CloseConnection();
+            }
+        }
+
+
 
     }
 }
