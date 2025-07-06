@@ -68,9 +68,9 @@
             // apptDgv
             // 
             this.apptDgv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.apptDgv.Location = new System.Drawing.Point(348, 18);
+            this.apptDgv.Location = new System.Drawing.Point(348, 82);
             this.apptDgv.Name = "apptDgv";
-            this.apptDgv.Size = new System.Drawing.Size(407, 420);
+            this.apptDgv.Size = new System.Drawing.Size(407, 330);
             this.apptDgv.TabIndex = 20;
             // 
             // modApptBtn

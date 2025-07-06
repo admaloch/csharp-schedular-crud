@@ -9,53 +9,79 @@ namespace c969_scheduler_program
 {
     public partial class ModifyAppointment : Form
     {
-        private int appointmentId;
 
-        private Appointment appointment;
+        private Appointment currAppointment;
 
         DateTime selectedDate;
 
-        public ModifyAppointment(int id)
+        public ModifyAppointment(Appointment appointment)
         {
-            InitializeComponent();
-            appointmentId = id;
-            this.Load += (s, e) => PopulateDurationVals();
-            AppointmentValidator.ValidateAppointment(titleTxt, typeTxt, locationTxt);
-            UpdateCurrUserAppts();
-            selectedDate = appointment.Start.Date;//grab selected date
-            LoadCustomerComboBox();
-            InitializeInputEvents();
-            //validate inputs
-            List<Appointment> appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, selectedDate);
-            durationComboBox.SelectedIndexChanged += (s, e) => AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments);
-            LoadCustomerData();
+            InitializeComponent(); // Must come first
+            currAppointment = appointment;
+            // Delay this until the form is loaded fully
+            this.Load += ModifyAppointment_Load;
         }
 
-        private void LoadCustomerData()
+        private void ModifyAppointment_Load(object sender, EventArgs e)
         {
-            // Title
-            titleTxt.Text = appointment.Title;
 
-            // Type
-            typeTxt.Text = appointment.Type;
+            if (currAppointment == null)
+            {
+                MessageBox.Show("Appointment not found.");
+                this.Close();
+                return;
+            }
 
-            // Description
-            descriptionTxt.Text = appointment.Description;
 
-            // Location
-            locationTxt.Text = appointment.Location;
+            selectedDate = currAppointment.Start.Date;
+            monthCalendar.SetDate(selectedDate);
 
-            // Contact
-            contactTxt.Text = appointment.Contact;
+            dateLbl.Text = $"Date: {currAppointment.Start}";
 
-            // URL
-            urlTxt.Text = appointment.Url;
+            SetApptDurationSelectVals();
+
+            // Populate available slots
+            SetApptSlotsVals();
+
+            LoadCustomerComboBox();
+            InitializeInputEvents();
+            SetInitialInputValues(); // prefill form inputs
+
+            LoadCurrApptData(); // If this uses currAppointment, it's now safe
+        }
+
+        private void SetApptSlotsVals()
+        {
+            List<Appointment> appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, selectedDate);
+            AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments, currAppointment);
+        }
+        private void LoadCurrApptData()
+        {
+            apptDgv.DataSource = new List<Appointment> { currAppointment };
+
+            apptDgv.Columns["CustomerId"].Visible = false;
+            apptDgv.Columns["Start"].DefaultCellStyle.Format = "h:mm tt";
+            apptDgv.Columns["End"].DefaultCellStyle.Format = "h:mm tt";
+            apptDgv.ReadOnly = true;
+            apptDgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            apptDgv.RowHeadersVisible = false;
+            apptDgv.MultiSelect = false;
+            apptDgv.AllowUserToAddRows = false;
+        }
+        private void SetInitialInputValues()
+        {
+            titleTxt.Text = currAppointment.Title;
+            typeTxt.Text = currAppointment.Type;
+            descriptionTxt.Text = currAppointment.Description;
+            locationTxt.Text = currAppointment.Location;
+            contactTxt.Text = currAppointment.Contact;
+            urlTxt.Text = currAppointment.Url;
 
             // Set customer combo box selection
-            customerComboBox.SelectedValue = appointment.CustomerId;
+            customerComboBox.SelectedValue = currAppointment.CustomerId;
 
             // Set duration
-            int duration = (int)(appointment.End - appointment.Start).TotalMinutes;
+            int duration = (int)(currAppointment.End - currAppointment.Start).TotalMinutes;
             if (durationComboBox.Items.Contains(duration.ToString()))
             {
                 durationComboBox.SelectedItem = duration.ToString();
@@ -65,34 +91,26 @@ namespace c969_scheduler_program
                 durationComboBox.SelectedIndex = 0; // fallback
             }
 
-            // Set time slot (formatted to match the items in your aptTimeComboBox, like "9:00 AM")
-            string timeString = appointment.Start.ToString("h:mm tt");
-            if (aptTimeComboBox.Items.Contains(timeString))
+            string timeString = currAppointment.Start.ToString("hh:mm tt");
+
+            bool matchFound = false;
+            foreach (var item in aptTimeComboBox.Items)
             {
-                aptTimeComboBox.SelectedItem = timeString;
+                if (item.ToString().Trim().Equals(timeString, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    aptTimeComboBox.SelectedItem = item;
+                    matchFound = true;
+                    break;
+                }
             }
-            else
+
+            if (!matchFound && aptTimeComboBox.Items.Count > 0)
             {
                 aptTimeComboBox.SelectedIndex = 0; // fallback
             }
 
         }
-
-        public void UpdateCurrUserAppts()
-        {
-            //load customer data filtered by current user and populate the dgv with it
-            appointment = Appointment.GetAppointmentById(appointmentId);
-            apptDgv.DataSource = appointment;
-            apptDgv.Columns["CustomerId"].Visible = false;
-            apptDgv.Columns["start"].DefaultCellStyle.Format = "h:mm tt";
-            apptDgv.Columns["end"].DefaultCellStyle.Format = "h:mm tt";
-            apptDgv.ReadOnly = true;
-            apptDgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            apptDgv.RowHeadersVisible = false;
-            apptDgv.MultiSelect = false;
-            apptDgv.AllowUserToAddRows = false;
-        }
-        private void PopulateDurationVals()
+        private void SetApptDurationSelectVals()
         {
             durationComboBox.Items.Add("15");
             durationComboBox.Items.Add("30");
@@ -106,18 +124,23 @@ namespace c969_scheduler_program
             typeTxt.TextChanged += SharedInputChanged;
             locationTxt.TextChanged += SharedInputChanged;
         }
-
         private void SharedInputChanged(object sender, EventArgs e)//connect inputs into shared listener
         {
             AppointmentValidator.ValidateAppointment(titleTxt, typeTxt, locationTxt);
         }
-
         private void LoadCustomerComboBox()
         {
             List<Customer> usersCustomers = Customer.GetCustomersByUserId(CurrentUser.UserId);
             customerComboBox.DataSource = usersCustomers;
             customerComboBox.DisplayMember = "CustomerName"; // What user sees
             customerComboBox.ValueMember = "CustomerId";     // What you use in code
+        }
+        private void monthCalendar_DateChanged(object sender, DateRangeEventArgs e)
+        {
+            selectedDate = monthCalendar.SelectionStart.Date;
+            MessageBox.Show(selectedDate.ToString());
+            SetApptSlotsVals();
+
         }
 
         private void submitBtn_Click(object sender, EventArgs e)
@@ -129,7 +152,6 @@ namespace c969_scheduler_program
                 return;
             }
 
-
             string selectedTime = aptTimeComboBox.SelectedItem.ToString(); // e.g., "10:30 AM"
             int durationMinutes = int.Parse(durationComboBox.SelectedItem.ToString());
 
@@ -140,7 +162,7 @@ namespace c969_scheduler_program
 
             Appointment newAppointment = new Appointment
             {
-                AppointmentId = 0,
+                AppointmentId = currAppointment.AppointmentId,
                 CustomerId = (int)customerComboBox.SelectedValue,
                 CustomerName = customerComboBox.Text,
                 Title = customerComboBox.Text,
@@ -156,13 +178,18 @@ namespace c969_scheduler_program
             bool isSuccess = Appointment.UpdateAppointment(newAppointment);
             if (!isSuccess)
             {
-                MessageBox.Show("Failed to update appointment", "Db Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //MessageBox.Show("Failed to update appointment", "Db Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return; // Don't close form
             }
 
-            MessageBox.Show("Appointment successfully updated!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"Appointment changed to {start}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void durationComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetApptSlotsVals();
         }
     }
 }

@@ -14,14 +14,14 @@ namespace c969_scheduler_program
 
         }
 
-        private DateTime GenCurrDate()
+        private DateTime GetSelectedCalendarDate()
         {
             return monthCalendar.SelectionStart.Date;
         }
 
         private void LoadCurrApptDate()
         {
-            var appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, GenCurrDate());
+            var appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, GetSelectedCalendarDate());
             apptDgv.DataSource = appointments;
             apptDgv.Columns["CustomerId"].Visible = false;
             apptDgv.Columns["start"].DefaultCellStyle.Format = "h:mm tt";
@@ -41,7 +41,7 @@ namespace c969_scheduler_program
 
         private void addApptBtn_Click(object sender, EventArgs e)
         {
-            AddAppointment frm = new AddAppointment(GenCurrDate());
+            AddAppointment frm = new AddAppointment(GetSelectedCalendarDate());
             var result = frm.ShowDialog();
 
             if (result == DialogResult.OK)
@@ -58,7 +58,9 @@ namespace c969_scheduler_program
                 return;
             }
             int appointmentId = Utilities.GrabDgvRowId(apptDgv);
-            ModifyAppointment frm = new ModifyAppointment(appointmentId);
+            Appointment currAppointment = Appointment.GetAppointmentById(appointmentId);
+
+            ModifyAppointment frm = new ModifyAppointment(currAppointment);
             var result = frm.ShowDialog();
 
             if (result == DialogResult.OK)

@@ -73,6 +73,7 @@ namespace c969_scheduler_program.Models
             {
                 DBUtils.OpenConnection();
 
+
                 string query = @"
             UPDATE Appointment
             SET

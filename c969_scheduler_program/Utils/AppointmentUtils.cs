@@ -13,8 +13,9 @@ namespace c969_scheduler_program.Utils
             ComboBox aptTimeComboBox,
             ComboBox durationComboBox,
             DateTime selectedDate,
-            List<Appointment> appointments
-            )
+            List<Appointment> appointments,
+            Appointment appointmentToIgnore = null
+        )
         {
             aptTimeComboBox.Items.Clear();
 
@@ -33,9 +34,34 @@ namespace c969_scheduler_program.Utils
                 {
                     DateTime proposedEnd = startTime.AddMinutes(durationMinutes);
 
-                    bool overlaps = appointments.Any(appt =>
-                        (startTime < appt.End && proposedEnd > appt.Start)
-                    );
+                    bool overlaps = false;
+
+                    foreach (var appt in appointments)
+                    {
+                        // Skip the appointment being modified
+                        if (appointmentToIgnore != null && appt.AppointmentId == appointmentToIgnore.AppointmentId)
+                            continue;
+
+                        // Check for conflict with other appointments
+                        if (startTime < appt.End && proposedEnd > appt.Start)
+                        {
+                            // Special case: current appointment's original start time
+                            if (appointmentToIgnore != null && startTime == appointmentToIgnore.Start)
+                            {
+                                // If the new end extends into another appt, it's a conflict
+                                if (proposedEnd > appointmentToIgnore.End)
+                                {
+                                    overlaps = true;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                overlaps = true;
+                                break;
+                            }
+                        }
+                    }
 
                     if (!overlaps)
                     {

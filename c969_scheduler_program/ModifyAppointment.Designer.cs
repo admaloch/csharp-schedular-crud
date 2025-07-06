@@ -51,6 +51,9 @@
             this.submitBtn = new System.Windows.Forms.Button();
             this.apptDgv = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
+            this.monthCalendar = new System.Windows.Forms.MonthCalendar();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.apptDgv)).BeginInit();
             this.SuspendLayout();
             // 
@@ -79,6 +82,7 @@
             this.durationComboBox.Name = "durationComboBox";
             this.durationComboBox.Size = new System.Drawing.Size(216, 21);
             this.durationComboBox.TabIndex = 83;
+            this.durationComboBox.SelectedIndexChanged += new System.EventHandler(this.durationComboBox_SelectedIndexChanged);
             // 
             // label9
             // 
@@ -215,7 +219,7 @@
             // 
             this.dateLbl.AutoSize = true;
             this.dateLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dateLbl.Location = new System.Drawing.Point(23, 64);
+            this.dateLbl.Location = new System.Drawing.Point(31, 70);
             this.dateLbl.Name = "dateLbl";
             this.dateLbl.Size = new System.Drawing.Size(219, 29);
             this.dateLbl.TabIndex = 67;
@@ -238,30 +242,61 @@
             this.submitBtn.TabIndex = 65;
             this.submitBtn.Text = "Submit";
             this.submitBtn.UseVisualStyleBackColor = true;
+            this.submitBtn.Click += new System.EventHandler(this.submitBtn_Click);
             // 
             // apptDgv
             // 
             this.apptDgv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.apptDgv.Location = new System.Drawing.Point(338, 119);
+            this.apptDgv.Location = new System.Drawing.Point(354, 341);
             this.apptDgv.Name = "apptDgv";
-            this.apptDgv.Size = new System.Drawing.Size(407, 251);
+            this.apptDgv.Size = new System.Drawing.Size(407, 58);
             this.apptDgv.TabIndex = 64;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(21, 15);
+            this.label1.Location = new System.Drawing.Point(24, 21);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(338, 39);
             this.label1.TabIndex = 63;
             this.label1.Text = "Modify appointment";
+            // 
+            // monthCalendar
+            // 
+            this.monthCalendar.Location = new System.Drawing.Point(445, 127);
+            this.monthCalendar.Name = "monthCalendar";
+            this.monthCalendar.TabIndex = 86;
+            this.monthCalendar.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.monthCalendar_DateChanged);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(485, 89);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(144, 29);
+            this.label10.TabIndex = 87;
+            this.label10.Text = "Update date";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Location = new System.Drawing.Point(441, 301);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(231, 29);
+            this.label11.TabIndex = 88;
+            this.label11.Text = "Current appointment";
             // 
             // ModifyAppointment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.monthCalendar);
             this.Controls.Add(this.aptTimeComboBox);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.durationComboBox);
@@ -318,5 +353,8 @@
         private System.Windows.Forms.Button submitBtn;
         private System.Windows.Forms.DataGridView apptDgv;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.MonthCalendar monthCalendar;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
     }
 }
