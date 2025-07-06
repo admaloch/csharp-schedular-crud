@@ -81,6 +81,7 @@
             this.modApptBtn.TabIndex = 21;
             this.modApptBtn.Text = "Modify selected appointment";
             this.modApptBtn.UseVisualStyleBackColor = true;
+            this.modApptBtn.Click += new System.EventHandler(this.modApptBtn_Click);
             // 
             // deleteApptBtn
             // 

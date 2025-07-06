@@ -2,12 +2,7 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace c969_scheduler_program.Models
 {
@@ -25,6 +20,105 @@ namespace c969_scheduler_program.Models
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
 
+
+        public static bool InsertAppointment(Appointment appt)
+        {
+            try
+            {
+                DBUtils.OpenConnection();
+
+                string query = @"
+            INSERT INTO Appointment (
+                customerId, userId, title, description, location, contact, type, url,
+                start, end, createDate, createdBy, lastUpdate, lastUpdateBy
+            ) VALUES (
+                @customerId, @userId, @title, @description, @location, @contact, @type, @url,
+                @start, @end, NOW(), @createdBy, NOW(), @lastUpdateBy
+            );
+        ";
+
+                using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@customerId", appt.CustomerId);
+                    cmd.Parameters.AddWithValue("@userId", CurrentUser.UserId);
+                    cmd.Parameters.AddWithValue("@title", appt.Title);
+                    cmd.Parameters.AddWithValue("@description", appt.Description);
+                    cmd.Parameters.AddWithValue("@location", appt.Location);
+                    cmd.Parameters.AddWithValue("@contact", appt.Contact);
+                    cmd.Parameters.AddWithValue("@type", appt.Type);
+                    cmd.Parameters.AddWithValue("@url", appt.Url ?? "");
+                    cmd.Parameters.AddWithValue("@start", appt.Start);
+                    cmd.Parameters.AddWithValue("@end", appt.End);
+                    cmd.Parameters.AddWithValue("@createdBy", CurrentUser.UserName);
+                    cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName); // Assuming same user
+                    cmd.ExecuteNonQuery();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error inserting appointment: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                DBUtils.CloseConnection();
+            }
+        }
+
+        public static bool UpdateAppointment(Appointment appt)
+        {
+            try
+            {
+                DBUtils.OpenConnection();
+
+                string query = @"
+            UPDATE Appointment
+            SET
+                customerId = @customerId,
+                userId = @userId,
+                title = @title,
+                description = @description,
+                location = @location,
+                contact = @contact,
+                type = @type,
+                url = @url,
+                start = @start,
+                end = @end,
+                lastUpdate = NOW(),
+                lastUpdateBy = @lastUpdateBy
+            WHERE appointmentId = @appointmentId";
+
+                using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@appointmentId", appt.AppointmentId);
+                    cmd.Parameters.AddWithValue("@customerId", appt.CustomerId);
+                    cmd.Parameters.AddWithValue("@userId", CurrentUser.UserId); // or appt.UserId if stored
+                    cmd.Parameters.AddWithValue("@title", appt.Title);
+                    cmd.Parameters.AddWithValue("@description", appt.Description);
+                    cmd.Parameters.AddWithValue("@location", appt.Location);
+                    cmd.Parameters.AddWithValue("@contact", appt.Contact);
+                    cmd.Parameters.AddWithValue("@type", appt.Type);
+                    cmd.Parameters.AddWithValue("@url", appt.Url);
+                    cmd.Parameters.AddWithValue("@start", appt.Start);
+                    cmd.Parameters.AddWithValue("@end", appt.End);
+                    cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    return rowsAffected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating appointment: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                DBUtils.CloseConnection();
+            }
+        }
 
         public static List<Appointment> GetAppointmentsForUserByDate(int userId, DateTime date)
         {
@@ -98,50 +192,59 @@ namespace c969_scheduler_program.Models
             return appointments;
         }
 
-        public static bool InsertAppointment(Appointment appt)
+        public static Appointment GetAppointmentById(int appointmentId)
         {
+            Appointment appointment = null;
+
             try
             {
                 DBUtils.OpenConnection();
 
                 string query = @"
-            INSERT INTO Appointment (
-                customerId, userId, title, description, location, contact, type, url,
-                start, end, createDate, createdBy, lastUpdate, lastUpdateBy
-            ) VALUES (
-                @customerId, @userId, @title, @description, @location, @contact, @type, @url,
-                @start, @end, NOW(), @createdBy, NOW(), @lastUpdateBy
-            );
-        ";
+            SELECT 
+                ap.*, 
+                c.customerName
+            FROM Appointment ap
+            JOIN Customer c ON ap.customerId = c.customerId
+            WHERE ap.appointmentId = @appointmentId";
 
                 using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
                 {
-                    cmd.Parameters.AddWithValue("@customerId", appt.CustomerId);
-                    cmd.Parameters.AddWithValue("@userId", CurrentUser.UserId);
-                    cmd.Parameters.AddWithValue("@title", appt.Title);
-                    cmd.Parameters.AddWithValue("@description", appt.Description);
-                    cmd.Parameters.AddWithValue("@location", appt.Location);
-                    cmd.Parameters.AddWithValue("@contact", appt.Contact);
-                    cmd.Parameters.AddWithValue("@type", appt.Type);
-                    cmd.Parameters.AddWithValue("@url", appt.Url ?? "");
-                    cmd.Parameters.AddWithValue("@start", appt.Start);
-                    cmd.Parameters.AddWithValue("@end", appt.End);
-                    cmd.Parameters.AddWithValue("@createdBy", CurrentUser.UserName);
-                    cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName); // Assuming same user
-                    cmd.ExecuteNonQuery();
-                }
+                    cmd.Parameters.AddWithValue("@appointmentId", appointmentId);
 
-                return true;
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            appointment = new Appointment
+                            {
+                                AppointmentId = reader.GetInt32("appointmentId"),
+                                CustomerId = reader.GetInt32("customerId"),
+                                CustomerName = reader.GetString("customerName"),
+                                Title = reader.GetString("title"),
+                                Type = reader.GetString("type"),
+                                Description = reader.GetString("description"),
+                                Location = reader.GetString("location"),
+                                Contact = reader.GetString("contact"),
+                                Url = reader.GetString("url"),
+                                Start = reader.GetDateTime("start"),
+                                End = reader.GetDateTime("end")
+                                // You can add CreateDate, CreatedBy, LastUpdate, LastUpdateBy if needed
+                            };
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error inserting appointment: " + ex.Message);
-                return false;
+                MessageBox.Show("Error retrieving appointment: " + ex.Message);
             }
             finally
             {
                 DBUtils.CloseConnection();
             }
+
+            return appointment;
         }
 
 

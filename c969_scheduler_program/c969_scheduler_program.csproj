@@ -139,6 +139,12 @@
     <Compile Include="Models\Appointment.cs" />
     <Compile Include="Models\CurrentUser.cs" />
     <Compile Include="Models\Customer.cs" />
+    <Compile Include="ModifyAppointment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModifyAppointment.Designer.cs">
+      <DependentUpon>ModifyAppointment.cs</DependentUpon>
+    </Compile>
     <Compile Include="ModifyCustomer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -172,6 +178,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainAppointments.resx">
       <DependentUpon>MainAppointments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModifyAppointment.resx">
+      <DependentUpon>ModifyAppointment.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ModifyCustomer.resx">
       <DependentUpon>ModifyCustomer.cs</DependentUpon>

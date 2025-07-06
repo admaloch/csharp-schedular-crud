@@ -1,4 +1,5 @@
 ﻿using c969_scheduler_program.Models;
+using c969_scheduler_program.Utils;
 using System;
 using System.Windows.Forms;
 
@@ -32,21 +33,38 @@ namespace c969_scheduler_program
             apptDgv.AllowUserToAddRows = false;
         }
 
+        private void monthCalendar_DateChanged(object sender, DateRangeEventArgs e)
+        {
+            LoadCurrApptDate();
+        }
+
 
         private void addApptBtn_Click(object sender, EventArgs e)
         {
             AddAppointment frm = new AddAppointment(GenCurrDate());
-            var result = frm.ShowDialog(); // ✅ ONLY this, no .Show()
+            var result = frm.ShowDialog();
 
             if (result == DialogResult.OK)
             {
-                LoadCurrApptDate(); // ✅ Will now run correctly after dialog closes
+                LoadCurrApptDate();
             }
         }
 
-        private void monthCalendar_DateChanged(object sender, DateRangeEventArgs e)
+        private void modApptBtn_Click(object sender, EventArgs e)
         {
-            LoadCurrApptDate();
+            if (!Utilities.IsRowSelected(apptDgv))
+            {
+                MessageBox.Show("Please select a customer to modify.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            int appointmentId = Utilities.GrabDgvRowId(apptDgv);
+            ModifyAppointment frm = new ModifyAppointment(appointmentId);
+            var result = frm.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                LoadCurrApptDate();
+            }
         }
     }
 }
