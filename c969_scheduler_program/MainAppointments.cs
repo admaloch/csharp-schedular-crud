@@ -10,16 +10,13 @@ namespace c969_scheduler_program
         public MainAppointments()
         {
             InitializeComponent();
-            LoadCurrApptDate();
-
+            SetCurrApptDgv();
         }
-
         private DateTime GetSelectedCalendarDate()
         {
             return monthCalendar.SelectionStart.Date;
         }
-
-        private void LoadCurrApptDate()
+        private void SetCurrApptDgv()
         {
             var appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, GetSelectedCalendarDate());
             apptDgv.DataSource = appointments;
@@ -32,13 +29,10 @@ namespace c969_scheduler_program
             apptDgv.MultiSelect = false;
             apptDgv.AllowUserToAddRows = false;
         }
-
         private void monthCalendar_DateChanged(object sender, DateRangeEventArgs e)
         {
-            LoadCurrApptDate();
+            SetCurrApptDgv();
         }
-
-
         private void addApptBtn_Click(object sender, EventArgs e)
         {
             AddAppointment frm = new AddAppointment(GetSelectedCalendarDate());
@@ -46,10 +40,9 @@ namespace c969_scheduler_program
 
             if (result == DialogResult.OK)
             {
-                LoadCurrApptDate();
+                SetCurrApptDgv();
             }
         }
-
         private void modApptBtn_Click(object sender, EventArgs e)
         {
             if (!Utilities.IsRowSelected(apptDgv))
@@ -65,10 +58,9 @@ namespace c969_scheduler_program
 
             if (result == DialogResult.OK)
             {
-                LoadCurrApptDate();
+                SetCurrApptDgv();
             }
         }
-
         private void deleteApptBtn_Click(object sender, EventArgs e)
         {
             if (!Utilities.IsRowSelected(apptDgv))
@@ -84,7 +76,7 @@ namespace c969_scheduler_program
                 return;
             }
             MessageBox.Show($"Appointment deleted!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            LoadCurrApptDate();
+            SetCurrApptDgv();
 
         }
     }

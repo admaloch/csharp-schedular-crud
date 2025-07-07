@@ -247,9 +247,9 @@
             // apptDgv
             // 
             this.apptDgv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.apptDgv.Location = new System.Drawing.Point(354, 341);
+            this.apptDgv.Location = new System.Drawing.Point(353, 314);
             this.apptDgv.Name = "apptDgv";
-            this.apptDgv.Size = new System.Drawing.Size(407, 58);
+            this.apptDgv.Size = new System.Drawing.Size(407, 71);
             this.apptDgv.TabIndex = 64;
             // 
             // label1
@@ -264,7 +264,7 @@
             // 
             // monthCalendar
             // 
-            this.monthCalendar.Location = new System.Drawing.Point(445, 127);
+            this.monthCalendar.Location = new System.Drawing.Point(444, 108);
             this.monthCalendar.Name = "monthCalendar";
             this.monthCalendar.TabIndex = 86;
             this.monthCalendar.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.monthCalendar_DateChanged);
@@ -273,7 +273,7 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(485, 89);
+            this.label10.Location = new System.Drawing.Point(484, 70);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(144, 29);
             this.label10.TabIndex = 87;
@@ -283,7 +283,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(441, 301);
+            this.label11.Location = new System.Drawing.Point(440, 276);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(231, 29);
             this.label11.TabIndex = 88;

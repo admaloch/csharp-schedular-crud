@@ -10,22 +10,24 @@ namespace c969_scheduler_program
     public partial class AddAppointment : Form
     {
         private DateTime selectedDate;
-
         private List<Appointment> appointments;
-
         public AddAppointment(DateTime date)
         {
             InitializeComponent();
             selectedDate = date;
-            this.Load += (s, e) => PopulateDurationVals();
-            AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);
-            UpdateCurrUserAppts();
-            LoadCustomerComboBox();
-            InitializeInputEvents();
-            //validate inputs
-            durationComboBox.SelectedIndexChanged += (s, e) => AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments);
+            this.Load += AddAppointment_Load;
         }
-        public void UpdateCurrUserAppts()
+        private void AddAppointment_Load(object sender, EventArgs e)
+        {
+            dateLbl.Text = $"Date: {selectedDate.ToShortDateString()}";
+            InitializeInputEvents();
+            SetApptDurationComboBoxVals();
+            SetCurrApptsDgv();
+            SetCustomerComboBoxVals();
+            AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments);
+            AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);
+        }
+        public void SetCurrApptsDgv()
         {
             //load customer data filtered by current user and populate the dgv with it
             appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, selectedDate);
@@ -39,7 +41,7 @@ namespace c969_scheduler_program
             apptDgv.MultiSelect = false;
             apptDgv.AllowUserToAddRows = false;
         }
-        private void PopulateDurationVals()
+        private void SetApptDurationComboBoxVals()
         {
             durationComboBox.Items.Add("15");
             durationComboBox.Items.Add("30");
@@ -53,20 +55,17 @@ namespace c969_scheduler_program
             typeTxt.TextChanged += SharedInputChanged;
             locationTxt.TextChanged += SharedInputChanged;
         }
-
         private void SharedInputChanged(object sender, EventArgs e)//connect inputs into shared listener
         {
             AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);
         }
-
-        private void LoadCustomerComboBox()
+        private void SetCustomerComboBoxVals()
         {
-            List<Customer> usersCustomers = Customer.GetCustomersByUserId(CurrentUser.UserId);
-            customerComboBox.DataSource = usersCustomers;
+            List<Customer> allCustomers = Customer.GetAllCustomers();
+            customerComboBox.DataSource = allCustomers;
             customerComboBox.DisplayMember = "CustomerName"; // What user sees
             customerComboBox.ValueMember = "CustomerId";     // What you use in code
         }
-
         private void submitBtn_Click(object sender, EventArgs e)
         {
             var (isValid, formErrors) = AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);

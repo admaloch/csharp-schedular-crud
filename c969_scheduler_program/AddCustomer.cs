@@ -11,9 +11,12 @@ namespace c969_scheduler_program
         public AddCustomer()
         {
             InitializeComponent();
-            this.Load += (s, e) => InitializeInputEvents();
+            this.Load += AddCustomer_Load;
+        }
+        private void AddCustomer_Load(object sender, EventArgs e)
+        {
+            InitializeInputEvents();
             CustomerValidator.ValidateCustomer(nameTxt, addressTxt, cityTxt, countryTxt, zipTxt, phoneTxt);
-
         }
         private void InitializeInputEvents()
         {
@@ -29,12 +32,10 @@ namespace c969_scheduler_program
         {
             CustomerValidator.ValidateCustomer(nameTxt, addressTxt, cityTxt, countryTxt, zipTxt, phoneTxt);
         }
-
         private void closeBtn_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-
         private void submitBtn_Click(object sender, EventArgs e)
         {
             var (isValidated, formErrors) = CustomerValidator.ValidateCustomer(nameTxt, addressTxt, cityTxt, countryTxt, zipTxt, phoneTxt);

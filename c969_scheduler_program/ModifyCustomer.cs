@@ -7,19 +7,20 @@ namespace c969_scheduler_program
 {
     public partial class ModifyCustomer : Form
     {
-
         private Customer currCustomer;
-
         public ModifyCustomer(Customer customer)
         {
             InitializeComponent();
             currCustomer = customer;
-            LoadCustomerData();
-            this.Load += (s, e) => InitializeInputEvents();
+            this.Load += ModifyCustomer_Load;
+        }
+        private void ModifyCustomer_Load(object sender, EventArgs e)
+        {
+            SetInitialInputValues();
+            InitializeInputEvents();
             CustomerValidator.ValidateCustomer(nameTxt, addressTxt, cityTxt, countryTxt, zipTxt, phoneTxt);
         }
-
-        private void LoadCustomerData()
+        private void SetInitialInputValues()
         {
             nameTxt.Text = currCustomer.CustomerName;
             addressTxt.Text = currCustomer.Address;
@@ -30,8 +31,6 @@ namespace c969_scheduler_program
             phoneTxt.Text = currCustomer.Phone;
             activeCheckBox.Checked = currCustomer.IsActive;
         }
-
-
         private void InitializeInputEvents()
         {
             nameTxt.TextChanged += SharedInputChanged;
@@ -46,7 +45,6 @@ namespace c969_scheduler_program
         {
             CustomerValidator.ValidateCustomer(nameTxt, addressTxt, cityTxt, countryTxt, zipTxt, phoneTxt);
         }
-
         private void submitBtn_Click(object sender, EventArgs e)
         {
             var (isValidated, formErrors) = CustomerValidator.ValidateCustomer(nameTxt, addressTxt, cityTxt, countryTxt, zipTxt, phoneTxt);
@@ -89,7 +87,6 @@ namespace c969_scheduler_program
             this.Close(); // Optional: close form or go back
 
         }
-
         private void closeBtn_Click(object sender, EventArgs e)
         {
             this.Close();
