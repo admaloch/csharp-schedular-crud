@@ -35,6 +35,8 @@ namespace c969_scheduler_program
         }
         private void addApptBtn_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("Debug message here");
+
             AddAppointment frm = new AddAppointment(GetSelectedCalendarDate());
             var result = frm.ShowDialog();
 
