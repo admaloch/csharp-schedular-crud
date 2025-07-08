@@ -13,20 +13,22 @@ namespace c969_scheduler_program
             InitializeComponent();
             this.Load += MainAppointments_Load;
         }
+        private void MainAppointments_Load(object sender, EventArgs e)
+        {
+            SetSelectedDateApptsDgv();
+            apptDgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+        }
         private DateTime GetSelectedCalendarDate()
         {
             return monthCalendar.SelectionStart.Date;
         }
-        private void MainAppointments_Load(object sender, EventArgs e)
-        {
-            SetCurrApptDgv();
-        }
-        private void SetCurrApptDgv()
+        private void SetSelectedDateApptsDgv() //populate dgv
         {
             var appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, GetSelectedCalendarDate());
             apptDgv.DataSource = appointments;
-
             apptDgv.Columns["CustomerId"].Visible = false;
+            apptDgv.Columns["AppointmentId"].HeaderText = "Id";
+            apptDgv.Columns["CustomerName"].HeaderText = "Name";
             apptDgv.Columns["start"].DefaultCellStyle.Format = "h:mm tt";
             apptDgv.Columns["end"].DefaultCellStyle.Format = "h:mm tt";
             apptDgv.ReadOnly = true;
@@ -51,13 +53,10 @@ namespace c969_scheduler_program
         }
         private void monthCalendar_DateChanged(object sender, DateRangeEventArgs e)
         {
-            SetCurrApptDgv();
+            SetSelectedDateApptsDgv();
         }
         private void addApptBtn_Click(object sender, EventArgs e)
-
         {
-            Console.WriteLine(GetSelectedCalendarDate());
-
             if (GetSelectedCalendarDate() < DateTime.Today)
             {
                 MessageBox.Show("Cannot add appointment on a past date.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -69,7 +68,7 @@ namespace c969_scheduler_program
 
             if (result == DialogResult.OK)
             {
-                SetCurrApptDgv();
+                SetSelectedDateApptsDgv();
             }
         }
         private void modApptBtn_Click(object sender, EventArgs e)
@@ -93,7 +92,7 @@ namespace c969_scheduler_program
 
             if (result == DialogResult.OK)
             {
-                SetCurrApptDgv();
+                SetSelectedDateApptsDgv();
             }
         }
         private void deleteApptBtn_Click(object sender, EventArgs e)
@@ -117,8 +116,7 @@ namespace c969_scheduler_program
                 return;
             }
             MessageBox.Show($"Appointment deleted!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            SetCurrApptDgv();
-
+            SetSelectedDateApptsDgv();
         }
     }
 }

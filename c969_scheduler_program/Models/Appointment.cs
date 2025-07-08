@@ -9,17 +9,16 @@ namespace c969_scheduler_program.Models
     public class Appointment
     {
         public int AppointmentId { get; set; }
-        public int CustomerId { get; set; }
         public string CustomerName { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+        public int CustomerId { get; set; }
         public string Title { get; set; }
         public string Type { get; set; }
         public string Description { get; set; }
         public string Location { get; set; }
         public string Contact { get; set; }
         public string Url { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
-
 
         public static bool InsertAppointment(Appointment appt)
         {
@@ -73,7 +72,6 @@ namespace c969_scheduler_program.Models
                 DBUtils.CloseConnection();
             }
         }
-
 
         public static bool UpdateAppointment(Appointment appt)
         {

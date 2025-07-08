@@ -25,11 +25,21 @@ namespace c969_scheduler_program.Utils
             DateTime startTime = selectedDate.AddHours(9);  // 9:00 AM
             DateTime endTime = selectedDate.AddHours(17);   // 5:00 PM
 
+            // Current time (used only if selectedDate is today)
+            DateTime now = DateTime.Now;
+
             while (startTime.AddMinutes(durationMinutes) <= endTime)
             {
                 if (IsOnHalfHourMark(startTime))
                 {
                     DateTime proposedEnd = startTime.AddMinutes(durationMinutes);
+
+                    // ⛔ Skip if selected date is today and time is in the past
+                    if (selectedDate.Date == now.Date && startTime < now)
+                    {
+                        startTime = startTime.AddMinutes(30);
+                        continue;
+                    }
 
                     if (!IsConflicting(startTime, proposedEnd, appointments, appointmentToIgnore))
                     {
