@@ -28,14 +28,14 @@ namespace c969_scheduler_program.Models
                 DBUtils.OpenConnection();
 
                 string query = @"
-            INSERT INTO Appointment (
-                customerId, userId, title, description, location, contact, type, url,
-                start, end, createDate, createdBy, lastUpdate, lastUpdateBy
-            ) VALUES (
-                @customerId, @userId, @title, @description, @location, @contact, @type, @url,
-                @start, @end, NOW(), @createdBy, NOW(), @lastUpdateBy
-            );
-        ";
+                    INSERT INTO Appointment (
+                        customerId, userId, title, description, location, contact, type, url,
+                        start, end, createDate, createdBy, lastUpdate, lastUpdateBy
+                    ) VALUES (
+                        @customerId, @userId, @title, @description, @location, @contact, @type, @url,
+                        @start, @end, @createDate, @createdBy, @lastUpdate, @lastUpdateBy
+                    );
+                ";
 
                 using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
                 {
@@ -47,10 +47,17 @@ namespace c969_scheduler_program.Models
                     cmd.Parameters.AddWithValue("@contact", appt.Contact);
                     cmd.Parameters.AddWithValue("@type", appt.Type);
                     cmd.Parameters.AddWithValue("@url", appt.Url ?? "");
-                    cmd.Parameters.AddWithValue("@start", appt.Start);
-                    cmd.Parameters.AddWithValue("@end", appt.End);
+
+                    // Use UTC times
+                    cmd.Parameters.AddWithValue("@start", Utilities.ConvertToUTC(appt.Start));
+                    cmd.Parameters.AddWithValue("@end", Utilities.ConvertToUTC(appt.End));
+
+                    cmd.Parameters.AddWithValue("@createDate", DateTime.UtcNow);
+                    cmd.Parameters.AddWithValue("@lastUpdate", DateTime.UtcNow);
+
                     cmd.Parameters.AddWithValue("@createdBy", CurrentUser.UserName);
-                    cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName); // Assuming same user
+                    cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+
                     cmd.ExecuteNonQuery();
                 }
 
@@ -67,12 +74,12 @@ namespace c969_scheduler_program.Models
             }
         }
 
+
         public static bool UpdateAppointment(Appointment appt)
         {
             try
             {
                 DBUtils.OpenConnection();
-
 
                 string query = @"
             UPDATE Appointment
@@ -87,7 +94,7 @@ namespace c969_scheduler_program.Models
                 url = @url,
                 start = @start,
                 end = @end,
-                lastUpdate = NOW(),
+                lastUpdate = @lastUpdate,
                 lastUpdateBy = @lastUpdateBy
             WHERE appointmentId = @appointmentId";
 
@@ -102,8 +109,9 @@ namespace c969_scheduler_program.Models
                     cmd.Parameters.AddWithValue("@contact", appt.Contact);
                     cmd.Parameters.AddWithValue("@type", appt.Type);
                     cmd.Parameters.AddWithValue("@url", appt.Url);
-                    cmd.Parameters.AddWithValue("@start", appt.Start);
-                    cmd.Parameters.AddWithValue("@end", appt.End);
+                    cmd.Parameters.AddWithValue("@start", Utilities.ConvertToUTC(appt.Start));
+                    cmd.Parameters.AddWithValue("@end", Utilities.ConvertToUTC(appt.End));
+                    cmd.Parameters.AddWithValue("@lastUpdate", DateTime.UtcNow);
                     cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -174,8 +182,8 @@ namespace c969_scheduler_program.Models
                                 Location = reader.GetString("location"),
                                 Contact = reader.GetString("contact"),
                                 Url = reader.GetString("url"),
-                                Start = reader.GetDateTime("start"),
-                                End = reader.GetDateTime("end"),
+                                Start = Utilities.ConvertToLocalTime(reader.GetDateTime("start")),
+                                End = Utilities.ConvertToLocalTime(reader.GetDateTime("end")),
                             });
                         }
                     }
@@ -228,8 +236,8 @@ namespace c969_scheduler_program.Models
                                 Location = reader.GetString("location"),
                                 Contact = reader.GetString("contact"),
                                 Url = reader.GetString("url"),
-                                Start = reader.GetDateTime("start"),
-                                End = reader.GetDateTime("end")
+                                Start = Utilities.ConvertToLocalTime(reader.GetDateTime("start")),
+                                End = Utilities.ConvertToLocalTime(reader.GetDateTime("end")),
                                 // You can add CreateDate, CreatedBy, LastUpdate, LastUpdateBy if needed
                             };
                         }

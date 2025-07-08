@@ -15,8 +15,12 @@ namespace c969_scheduler_program
 
         private void OnDashboardLoad()
         {
-            Utilities.UpdateRegionAndTimeZoneLabels(timeZoneLbl, regionLbl);
             usernameLbl.Text = $"Current user: {CurrentUser.UserName}";
+            timeZoneLbl.Text = $"TimeZone: {Utilities.GetUserTimeZone()}";
+            regionLbl.Text = $"Region: {Utilities.GetUserRegion()}";
+            usernameLbl.Left = (this.ClientSize.Width - usernameLbl.Width) / 2;
+            regionLbl.Left = (this.ClientSize.Width - regionLbl.Width) / 2;
+            timeZoneLbl.Left = (this.ClientSize.Width - timeZoneLbl.Width) / 2;
         }
 
         private void customersBtn_Click(object sender, EventArgs e)

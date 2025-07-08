@@ -1,6 +1,7 @@
 ﻿using c969_scheduler_program.Models;
 using c969_scheduler_program.Utils;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace c969_scheduler_program
@@ -10,16 +11,21 @@ namespace c969_scheduler_program
         public MainAppointments()
         {
             InitializeComponent();
-            SetCurrApptDgv();
+            this.Load += MainAppointments_Load;
         }
         private DateTime GetSelectedCalendarDate()
         {
             return monthCalendar.SelectionStart.Date;
         }
+        private void MainAppointments_Load(object sender, EventArgs e)
+        {
+            SetCurrApptDgv();
+        }
         private void SetCurrApptDgv()
         {
             var appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, GetSelectedCalendarDate());
             apptDgv.DataSource = appointments;
+
             apptDgv.Columns["CustomerId"].Visible = false;
             apptDgv.Columns["start"].DefaultCellStyle.Format = "h:mm tt";
             apptDgv.Columns["end"].DefaultCellStyle.Format = "h:mm tt";
@@ -28,14 +34,35 @@ namespace c969_scheduler_program
             apptDgv.RowHeadersVisible = false;
             apptDgv.MultiSelect = false;
             apptDgv.AllowUserToAddRows = false;
+
+            // Gray out past appointments
+            foreach (DataGridViewRow row in apptDgv.Rows)
+            {
+                if (row.DataBoundItem is Appointment appt && appt.Start < DateTime.Now)
+                {
+                    row.DefaultCellStyle.ForeColor = Color.Gray;
+                    row.DefaultCellStyle.BackColor = Color.LightGray;
+                    row.DefaultCellStyle.Font = new Font(apptDgv.Font, FontStyle.Italic);
+                    row.Tag = "past"; // You can use this tag later to block selection/modification
+                }
+            }
+            apptDgv.ClearSelection();
+
         }
         private void monthCalendar_DateChanged(object sender, DateRangeEventArgs e)
         {
             SetCurrApptDgv();
         }
         private void addApptBtn_Click(object sender, EventArgs e)
+
         {
-            Console.WriteLine("Debug message here");
+            Console.WriteLine(GetSelectedCalendarDate());
+
+            if (GetSelectedCalendarDate() < DateTime.Today)
+            {
+                MessageBox.Show("Cannot add appointment on a past date.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             AddAppointment frm = new AddAppointment(GetSelectedCalendarDate());
             var result = frm.ShowDialog();
@@ -55,6 +82,12 @@ namespace c969_scheduler_program
             int appointmentId = Utilities.GrabDgvRowId(apptDgv);
             Appointment currAppointment = Appointment.GetAppointmentById(appointmentId);
 
+            if (currAppointment.Start < DateTime.Now)
+            {
+                MessageBox.Show("Past appointments cannot be modified.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             ModifyAppointment frm = new ModifyAppointment(currAppointment);
             var result = frm.ShowDialog();
 
@@ -71,6 +104,12 @@ namespace c969_scheduler_program
                 return;
             }
             int appointmentId = Utilities.GrabDgvRowId(apptDgv);
+            Appointment currAppointment = Appointment.GetAppointmentById(appointmentId);
+            if (currAppointment.Start < DateTime.Now)
+            {
+                MessageBox.Show("Cannot delete appointment on a past date.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             var result = Appointment.DeleteAppointment(appointmentId);
             if (!result)
             {

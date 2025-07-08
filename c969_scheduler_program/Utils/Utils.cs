@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
 
@@ -12,12 +13,54 @@ namespace c969_scheduler_program.Utils
             return !string.IsNullOrWhiteSpace(str);
         }
 
-        public static void UpdateRegionAndTimeZoneLabels(Label timeZoneLbl, Label regionLbl)
+        public static DateTime ConvertToUTC(DateTime localDateTime)
         {
-            string localTimeZone = TimeZoneInfo.Local.Id;
-            string region = RegionInfo.CurrentRegion.EnglishName;
-            timeZoneLbl.Text = $"Timezone: {localTimeZone}";
-            regionLbl.Text = $"Region: {region}";
+            return TimeZoneInfo.ConvertTimeToUtc(localDateTime, TimeZoneInfo.Local);
+        }
+
+        public static DateTime ConvertToLocalTime(DateTime utcDateTime)
+        {
+            // Force all non-UTC to UTC to prevent conversion error
+            if (utcDateTime.Kind != DateTimeKind.Utc)
+            {
+                utcDateTime = DateTime.SpecifyKind(utcDateTime, DateTimeKind.Utc);
+            }
+
+            return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local);
+        }
+
+
+        public static string GetUserTimeZone()
+        {
+            return TimeZoneInfo.Local.Id;
+        }
+        public static string GetUserTimeZoneAbbreviation()
+        {
+            var map = new Dictionary<string, string>
+            {
+                { "Central Standard Time", "CST" },
+                { "Central Daylight Time", "CDT" },
+                { "Pacific Standard Time", "PST" },
+                { "Pacific Daylight Time", "PDT" },
+                { "Eastern Standard Time", "EST" },
+                { "Eastern Daylight Time", "EDT" },
+                // Add more as needed
+            };
+
+            TimeZoneInfo localZone = TimeZoneInfo.Local;
+            string abbreviation;
+
+            if (map.TryGetValue(localZone.StandardName, out abbreviation) ||
+                map.TryGetValue(localZone.DaylightName, out abbreviation))
+            {
+                return abbreviation;
+            }
+
+            return localZone.StandardName; // fallback
+        }
+        public static string GetUserRegion()
+        {
+            return RegionInfo.CurrentRegion.EnglishName;
         }
 
         public static bool IsRowSelected(DataGridView dgv)//util for determining if a dgv row is selected

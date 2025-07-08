@@ -59,6 +59,7 @@
             // 
             // aptTimeComboBox
             // 
+            this.aptTimeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.aptTimeComboBox.FormattingEnabled = true;
             this.aptTimeComboBox.Location = new System.Drawing.Point(98, 225);
             this.aptTimeComboBox.Name = "aptTimeComboBox";
@@ -77,6 +78,7 @@
             // 
             // durationComboBox
             // 
+            this.durationComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.durationComboBox.FormattingEnabled = true;
             this.durationComboBox.Location = new System.Drawing.Point(98, 198);
             this.durationComboBox.Name = "durationComboBox";
@@ -141,6 +143,7 @@
             // 
             // customerComboBox
             // 
+            this.customerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.customerComboBox.FormattingEnabled = true;
             this.customerComboBox.Location = new System.Drawing.Point(98, 119);
             this.customerComboBox.Name = "customerComboBox";

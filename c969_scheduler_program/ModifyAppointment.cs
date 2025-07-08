@@ -127,9 +127,7 @@ namespace c969_scheduler_program
         private void monthCalendar_DateChanged(object sender, DateRangeEventArgs e)
         {
             selectedDate = monthCalendar.SelectionStart.Date;
-            MessageBox.Show(selectedDate.ToString());
             SetApptSlotsComboBoxVals();
-
         }
         private void submitBtn_Click(object sender, EventArgs e)
         {
@@ -166,7 +164,7 @@ namespace c969_scheduler_program
             bool isSuccess = Appointment.UpdateAppointment(newAppointment);
             if (!isSuccess)
             {
-                //MessageBox.Show("Failed to update appointment", "Db Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Failed to update appointment", "Db Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return; // Don't close form
             }
 

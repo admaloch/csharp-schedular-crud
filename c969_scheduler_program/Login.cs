@@ -26,8 +26,8 @@ namespace c969_scheduler_program
         {
             usernameTxt.TextChanged += SharedInputChanged; // Fix: attach to TextChanged event (not += a method to Text)
             passwordTxt.TextChanged += SharedInputChanged;
-
-            Utilities.UpdateRegionAndTimeZoneLabels(timeZoneLbl, regionLbl);//label the inputs with region and timezone
+            timeZoneLbl.Text = $"TimeZone: {Utilities.GetUserTimeZone()}";
+            regionLbl.Text = $"Region: {Utilities.GetUserRegion()}";
             LoginValidator.Validate(usernameTxt, passwordTxt);
         }
 

@@ -73,9 +73,10 @@ namespace c969_scheduler_program.Models
                             CustomerId = reader.GetInt32("customerId"),
                             CustomerName = reader.GetString("customerName"),
                             IsActive = reader.GetBoolean("active"),
-                            CreateDate = reader.GetDateTime("createDate"),
+                            CreateDate = Utilities.ConvertToLocalTime(reader.GetDateTime("createDate")),
+                            LastUpdate = Utilities.ConvertToLocalTime(reader.GetDateTime("lastUpdate")),
+
                             CreatedBy = reader.GetString("createdBy"),
-                            LastUpdate = reader.GetDateTime("lastUpdate"),
 
                             // Nullable string columns: check for DBNull first
                             LastUpdateBy = reader.IsDBNull(reader.GetOrdinal("lastUpdateBy")) ? "" : reader.GetString("lastUpdateBy"),
@@ -157,9 +158,9 @@ namespace c969_scheduler_program.Models
                                 CustomerId = reader.GetInt32("customerId"),
                                 CustomerName = reader.GetString("customerName"),
                                 IsActive = reader.GetBoolean("active"),
-                                CreateDate = reader.GetDateTime("createDate"),
+                                CreateDate = Utilities.ConvertToLocalTime(reader.GetDateTime("createDate")),
                                 CreatedBy = reader.GetString("createdBy"),
-                                LastUpdate = reader.GetDateTime("lastUpdate"),
+                                LastUpdate = Utilities.ConvertToLocalTime(reader.GetDateTime("lastUpdate")),
                                 LastUpdateBy = reader.GetString("lastUpdateBy"),
 
                                 AddressId = reader.GetInt32("addressId"),
@@ -189,52 +190,6 @@ namespace c969_scheduler_program.Models
 
             return customer;
         }
-
-        public static List<Customer> GetCustomersByUserId(int userId)
-        {
-            var customers = new List<Customer>();
-
-            try
-            {
-                DBUtils.OpenConnection();
-
-                string query = @"
-            SELECT c.customerId, c.customerName
-            FROM Customer c
-            JOIN Appointment ap ON c.customerId = ap.customerId
-            WHERE ap.userId = @userId
-            GROUP BY c.customerId, c.customerName;
-        ";
-
-                using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            customers.Add(new Customer
-                            {
-                                CustomerId = reader.GetInt32("customerId"),
-                                CustomerName = reader.GetString("customerName")
-                            });
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error loading customers: " + ex.Message);
-            }
-            finally
-            {
-                DBUtils.CloseConnection();
-            }
-
-            return customers;
-        }
-
 
         public static bool DeleteCustomer(int customerId)
         {
@@ -287,7 +242,7 @@ namespace c969_scheduler_program.Models
                 UPDATE Customer
                 SET customerName = @customerName,
                     active = @isActive,
-                    lastUpdate = NOW(),
+                    lastUpdate = @lastUpdate,
                     lastUpdateBy = @lastUpdateBy
                 WHERE customerId = @customerId;", conn, transaction))
                     {
@@ -295,6 +250,7 @@ namespace c969_scheduler_program.Models
                         cmd.Parameters.AddWithValue("@customerName", customer.CustomerName);
                         cmd.Parameters.AddWithValue("@isActive", customer.IsActive);
                         cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                        cmd.Parameters.AddWithValue("@lastUpdate", DateTime.UtcNow);
                         cmd.ExecuteNonQuery();
                     }
 
@@ -361,7 +317,6 @@ namespace c969_scheduler_program.Models
                 DBUtils.CloseConnection();
             }
         }
-
 
         public static bool AddCustomer(Customer customer)
         {
@@ -538,7 +493,7 @@ namespace c969_scheduler_program.Models
                 // SQL query to insert a new customer and return its auto-incremented ID
                 string insertCustomer = @"
                     INSERT INTO Customer (customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy)
-                    VALUES (@customerName, @addressId, @isActive, NOW(), @createdBy, NOW(), @lastUpdateBy);
+                    VALUES (@customerName, @addressId, @isActive, @createDate, @createdBy, @lastUpdate, @lastUpdateBy);
                     SELECT LAST_INSERT_ID();"; // Fetches the last inserted ID (for auto-increment)
 
                 using (var cmd = new MySqlCommand(insertCustomer, DBUtils.GetConnection()))//mySql command -- execution method cmd
@@ -549,6 +504,9 @@ namespace c969_scheduler_program.Models
                     cmd.Parameters.AddWithValue("@isActive", isActive);
                     cmd.Parameters.AddWithValue("@createdBy", createdBy);
                     cmd.Parameters.AddWithValue("@lastUpdateBy", createdBy);
+
+                    cmd.Parameters.AddWithValue("@createDate", DateTime.UtcNow);
+                    cmd.Parameters.AddWithValue("@lastUpdate", DateTime.UtcNow);
 
                     // ExecuteScalar is used because we're expecting a single return value (the ID)
                     object result = cmd.ExecuteScalar();
