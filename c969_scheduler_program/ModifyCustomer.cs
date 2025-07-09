@@ -53,12 +53,7 @@ namespace c969_scheduler_program
                 MessageBox.Show(string.Join("\n", formErrors), "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            MessageBox.Show(
-                $"Customer ID: {currCustomer.CustomerId}\n" +
-                $"Address ID: {currCustomer.AddressId}\n" +
-                $"City ID: {currCustomer.CityId}\n" +
-                $"Country ID: {currCustomer.CountryId}"
-            );
+
             Customer updatedCustomer = new Customer
             {
                 CustomerId = currCustomer.CustomerId,

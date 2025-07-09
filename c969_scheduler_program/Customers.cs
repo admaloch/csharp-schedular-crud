@@ -95,5 +95,10 @@ namespace c969_scheduler_program
                 LoadCustomerData();
             }
         }
+
+        private void exitbtn_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

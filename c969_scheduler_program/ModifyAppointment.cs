@@ -4,12 +4,14 @@ using c969_scheduler_program.Validators;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace c969_scheduler_program
 {
     public partial class ModifyAppointment : Form
     {
         private Appointment currAppointment;
+        private List<Appointment> appointments;
         DateTime selectedDate;
         public ModifyAppointment(Appointment appointment)
         {
@@ -32,31 +34,23 @@ namespace c969_scheduler_program
             monthCalendar.SetDate(selectedDate);
             dateLbl.Text = $"Date: {currAppointment.Start}";
 
-            SetApptDurationComboBoxVals();
-            SetApptSlotsComboBoxVals();// Populate available slots
-            SetCustomerComboBoxVals();
+            AppointmentUtils.SetApptDurationComboBoxVals(durationComboBox, appointments, selectedDate);
+            AppointmentUtils.SetCustomerComboBoxVals(customerComboBox);
             InitializeInputEvents();
             SetInitialInputValues(); // prefill form inputs
-            SetCurrApptDgv(); // If this uses currAppointment, it's now safe
+            SetSelectedDateApptDgv(); // If this uses currAppointment, it's now safe
         }
         private void SetApptSlotsComboBoxVals()
         {
-            List<Appointment> appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, selectedDate);
+            appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, selectedDate);
             AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments, currAppointment);
         }
-        private void SetCurrApptDgv()
+        private void SetSelectedDateApptDgv()
         {
-            apptDgv.DataSource = new List<Appointment> { currAppointment };
-
-            apptDgv.Columns["CustomerId"].Visible = false;
-            apptDgv.Columns["Start"].DefaultCellStyle.Format = "h:mm tt";
-            apptDgv.Columns["End"].DefaultCellStyle.Format = "h:mm tt";
-            apptDgv.ReadOnly = true;
-            apptDgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            apptDgv.RowHeadersVisible = false;
-            apptDgv.MultiSelect = false;
-            apptDgv.AllowUserToAddRows = false;
+            var appointment = new List<Appointment> { currAppointment };
+            AppointmentUtils.SetSelectedDateApptsDgvHelper(appointment, apptDgv);
         }
+
         private void SetInitialInputValues()
         {
             titleTxt.Text = currAppointment.Title;
@@ -99,14 +93,6 @@ namespace c969_scheduler_program
             }
 
         }
-        private void SetApptDurationComboBoxVals()
-        {
-            durationComboBox.Items.Add("15");
-            durationComboBox.Items.Add("30");
-            durationComboBox.Items.Add("45");
-            durationComboBox.Items.Add("60");
-            durationComboBox.SelectedIndex = 1; // defaults to 30 minutes
-        }
         private void InitializeInputEvents()
         {
             titleTxt.TextChanged += SharedInputChanged;
@@ -117,13 +103,7 @@ namespace c969_scheduler_program
         {
             AppointmentValidator.ValidateAppointment(titleTxt, typeTxt, locationTxt);
         }
-        private void SetCustomerComboBoxVals()
-        {
-            List<Customer> allCustomers = Customer.GetAllCustomers();
-            customerComboBox.DataSource = allCustomers;
-            customerComboBox.DisplayMember = "CustomerName"; // What user sees
-            customerComboBox.ValueMember = "CustomerId";     // What you use in code
-        }
+
         private void monthCalendar_DateChanged(object sender, DateRangeEventArgs e)
         {
             selectedDate = monthCalendar.SelectionStart.Date;

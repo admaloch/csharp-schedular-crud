@@ -33,6 +33,7 @@
             this.modifyBtn = new System.Windows.Forms.Button();
             this.addBtn = new System.Windows.Forms.Button();
             this.deleteBtn = new System.Windows.Forms.Button();
+            this.exitbtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.customerDGV)).BeginInit();
             this.SuspendLayout();
             // 
@@ -56,7 +57,7 @@
             // 
             // modifyBtn
             // 
-            this.modifyBtn.Location = new System.Drawing.Point(470, 374);
+            this.modifyBtn.Location = new System.Drawing.Point(368, 374);
             this.modifyBtn.Name = "modifyBtn";
             this.modifyBtn.Size = new System.Drawing.Size(95, 32);
             this.modifyBtn.TabIndex = 18;
@@ -66,7 +67,7 @@
             // 
             // addBtn
             // 
-            this.addBtn.Location = new System.Drawing.Point(369, 374);
+            this.addBtn.Location = new System.Drawing.Point(267, 374);
             this.addBtn.Name = "addBtn";
             this.addBtn.Size = new System.Drawing.Size(95, 32);
             this.addBtn.TabIndex = 17;
@@ -76,7 +77,7 @@
             // 
             // deleteBtn
             // 
-            this.deleteBtn.Location = new System.Drawing.Point(571, 374);
+            this.deleteBtn.Location = new System.Drawing.Point(469, 374);
             this.deleteBtn.Name = "deleteBtn";
             this.deleteBtn.Size = new System.Drawing.Size(95, 32);
             this.deleteBtn.TabIndex = 16;
@@ -84,11 +85,22 @@
             this.deleteBtn.UseVisualStyleBackColor = true;
             this.deleteBtn.Click += new System.EventHandler(this.deleteBtn_Click);
             // 
+            // exitbtn
+            // 
+            this.exitbtn.Location = new System.Drawing.Point(570, 374);
+            this.exitbtn.Name = "exitbtn";
+            this.exitbtn.Size = new System.Drawing.Size(95, 32);
+            this.exitbtn.TabIndex = 19;
+            this.exitbtn.Text = "Exit";
+            this.exitbtn.UseVisualStyleBackColor = true;
+            this.exitbtn.Click += new System.EventHandler(this.exitbtn_Click);
+            // 
             // Customers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.exitbtn);
             this.Controls.Add(this.modifyBtn);
             this.Controls.Add(this.addBtn);
             this.Controls.Add(this.deleteBtn);
@@ -109,5 +121,6 @@
         private System.Windows.Forms.Button modifyBtn;
         private System.Windows.Forms.Button addBtn;
         private System.Windows.Forms.Button deleteBtn;
+        private System.Windows.Forms.Button exitbtn;
     }
 }

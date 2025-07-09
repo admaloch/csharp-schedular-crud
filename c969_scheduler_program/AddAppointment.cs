@@ -11,6 +11,7 @@ namespace c969_scheduler_program
     {
         private DateTime selectedDate;
         private List<Appointment> appointments;
+
         public AddAppointment(DateTime date)
         {
             InitializeComponent();
@@ -21,34 +22,18 @@ namespace c969_scheduler_program
         {
             dateLbl.Text = $"Date: {selectedDate.ToShortDateString()}";
             InitializeInputEvents();
-            SetApptDurationComboBoxVals();
-            SetCurrApptsDgv();
-            SetCustomerComboBoxVals();
+            SetSelectedDateApptsDgv();
+            AppointmentUtils.SetCustomerComboBoxVals(customerComboBox);
+            AppointmentUtils.SetApptDurationComboBoxVals(durationComboBox, appointments, selectedDate);
             AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments);
             AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);
         }
-        public void SetCurrApptsDgv()
+        private void SetSelectedDateApptsDgv() //populate dgv
         {
-            //load customer data filtered by current user and populate the dgv with it
             appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, selectedDate);
-            apptDgv.DataSource = appointments;
-            apptDgv.Columns["CustomerId"].Visible = false;
-            apptDgv.Columns["start"].DefaultCellStyle.Format = "h:mm tt";
-            apptDgv.Columns["end"].DefaultCellStyle.Format = "h:mm tt";
-            apptDgv.ReadOnly = true;
-            apptDgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            apptDgv.RowHeadersVisible = false;
-            apptDgv.MultiSelect = false;
-            apptDgv.AllowUserToAddRows = false;
+            AppointmentUtils.SetSelectedDateApptsDgvHelper(appointments, apptDgv);
         }
-        private void SetApptDurationComboBoxVals()
-        {
-            durationComboBox.Items.Add("15");
-            durationComboBox.Items.Add("30");
-            durationComboBox.Items.Add("45");
-            durationComboBox.Items.Add("60");
-            durationComboBox.SelectedIndex = 1; // defaults to 30 minutes
-        }
+
         private void InitializeInputEvents()
         {
             nameTxt.TextChanged += SharedInputChanged;
@@ -58,13 +43,6 @@ namespace c969_scheduler_program
         private void SharedInputChanged(object sender, EventArgs e)//connect inputs into shared listener
         {
             AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);
-        }
-        private void SetCustomerComboBoxVals()
-        {
-            List<Customer> allCustomers = Customer.GetAllCustomers();
-            customerComboBox.DataSource = allCustomers;
-            customerComboBox.DisplayMember = "CustomerName"; // What user sees
-            customerComboBox.ValueMember = "CustomerId";     // What you use in code
         }
         private void submitBtn_Click(object sender, EventArgs e)
         {
@@ -108,6 +86,16 @@ namespace c969_scheduler_program
             MessageBox.Show("Appointment successfully added!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void durationComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (appointments == null)
+            {
+                return;
+            }
+
+            AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments);
         }
     }
 }

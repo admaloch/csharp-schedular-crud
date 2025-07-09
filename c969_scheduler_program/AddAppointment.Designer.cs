@@ -250,6 +250,7 @@
             this.durationComboBox.Name = "durationComboBox";
             this.durationComboBox.Size = new System.Drawing.Size(216, 21);
             this.durationComboBox.TabIndex = 60;
+            this.durationComboBox.SelectedIndexChanged += new System.EventHandler(this.durationComboBox_SelectedIndexChanged);
             // 
             // label9
             // 
