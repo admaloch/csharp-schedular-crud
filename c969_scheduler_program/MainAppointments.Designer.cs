@@ -101,6 +101,7 @@
             this.exitBtn.TabIndex = 23;
             this.exitBtn.Text = "Exit";
             this.exitBtn.UseVisualStyleBackColor = true;
+            this.exitBtn.Click += new System.EventHandler(this.exitBtn_Click);
             // 
             // MainAppointments
             // 
