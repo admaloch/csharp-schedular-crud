@@ -53,6 +53,10 @@ namespace c969_scheduler_program
 
         private void SetInitialInputValues()
         {
+            if (currAppointment == null)
+            {
+                return;
+            }
             titleTxt.Text = currAppointment.Title;
             typeTxt.Text = currAppointment.Type;
             descriptionTxt.Text = currAppointment.Description;

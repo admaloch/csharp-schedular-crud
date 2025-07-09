@@ -35,7 +35,8 @@ namespace c969_scheduler_program
         {
             await Task.Delay(1500);
             var todaysAppts = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, DateTime.Today);
-            var upcomingAppt = todaysAppts.FirstOrDefault(appt => appt.Start > DateTime.Now && appt.Start < DateTime.Now.AddMinutes(25));
+            DateTime delayTime = DateTime.Now.AddMinutes(15);
+            var upcomingAppt = todaysAppts.FirstOrDefault(appt => appt.Start > DateTime.Now && appt.Start < delayTime);
             if (upcomingAppt != null)
             {
                 MessageBox.Show($"Reminder!: You have an appointment at {upcomingAppt.Start.ToString("hh:mm")} with {upcomingAppt.CustomerName}", "Reminder", MessageBoxButtons.OK, MessageBoxIcon.Information);
