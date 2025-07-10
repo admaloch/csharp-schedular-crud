@@ -37,8 +37,7 @@ namespace c969_scheduler_program.Services
                 .ThenBy(a => a.Start)
                 .Select(a => new  // Anonymous type for binding
                 {
-                    User = User.GetById(a.UserId)?.UserName ?? "Unknown",
-                    a.UserId,
+                    User = User.GetUserById(a.UserId)?.UserName ?? "Unknown",
                     a.CustomerName,
                     a.Title,
                     a.Type,

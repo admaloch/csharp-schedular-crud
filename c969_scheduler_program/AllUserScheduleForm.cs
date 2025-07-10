@@ -31,14 +31,8 @@ namespace c969_scheduler_program
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
             }
 
-            // Specific column formatting
             schedulesDgv.RowHeadersVisible = false;
-            //schedulesDgv.Columns["MonthDisplay"].HeaderText = "Month";
-            //schedulesDgv.Columns["MonthValue"].Visible = false;
-            //schedulesDgv.Columns["Count"].HeaderText = "# Appointments";
-            //schedulesDgv.Columns["Type"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-
-            // Optional: Zebra striping
+            schedulesDgv.Columns["CustomerName"].HeaderText = "Customer";
             schedulesDgv.AlternatingRowsDefaultCellStyle.BackColor = Color.LightGray;
         }
     }
