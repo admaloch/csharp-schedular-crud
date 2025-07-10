@@ -116,17 +116,21 @@ namespace c969_scheduler_program.Utils
             dgv.MultiSelect = false;
             dgv.AllowUserToAddRows = false;
 
-            // Gray out past appointments
-            foreach (DataGridViewRow row in dgv.Rows)
+            if (appointments.Count > 1)
             {
-                if (row.DataBoundItem is Appointment appt && appt.Start < DateTime.Now)
+                // Gray out past appointments
+                foreach (DataGridViewRow row in dgv.Rows)
                 {
-                    row.DefaultCellStyle.ForeColor = Color.Gray;
-                    row.DefaultCellStyle.BackColor = Color.LightGray;
-                    row.DefaultCellStyle.Font = new Font(dgv.Font, FontStyle.Italic);
-                    row.Tag = "past"; // You can use this tag later to block selection/modification
+                    if (row.DataBoundItem is Appointment appt && appt.Start < DateTime.Now)
+                    {
+                        row.DefaultCellStyle.ForeColor = Color.Gray;
+                        row.DefaultCellStyle.BackColor = Color.LightGray;
+                        row.DefaultCellStyle.Font = new Font(dgv.Font, FontStyle.Italic);
+                        row.Tag = "past"; // You can use this tag later to block selection/modification
+                    }
                 }
             }
+
             dgv.ClearSelection();
             dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 

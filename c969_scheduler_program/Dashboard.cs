@@ -54,5 +54,11 @@ namespace c969_scheduler_program
             MainAppointments frm = new MainAppointments();
             frm.Show();
         }
+
+        private void reportsBtn_Click(object sender, EventArgs e)
+        {
+            MainReports frm = new MainReports();
+            frm.Show();
+        }
     }
 }

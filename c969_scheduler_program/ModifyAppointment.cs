@@ -57,6 +57,9 @@ namespace c969_scheduler_program
             {
                 return;
             }
+            durationComboBox.Items.Add("15");
+            durationComboBox.Items.Add("30");
+
             titleTxt.Text = currAppointment.Title;
             typeTxt.Text = currAppointment.Type;
             descriptionTxt.Text = currAppointment.Description;

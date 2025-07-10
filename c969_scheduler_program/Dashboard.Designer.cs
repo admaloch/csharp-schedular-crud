@@ -107,6 +107,7 @@
             this.reportsBtn.TabIndex = 14;
             this.reportsBtn.Text = "Reports";
             this.reportsBtn.UseVisualStyleBackColor = true;
+            this.reportsBtn.Click += new System.EventHandler(this.reportsBtn_Click);
             // 
             // logoutBtn
             // 
