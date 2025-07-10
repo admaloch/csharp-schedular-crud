@@ -28,5 +28,11 @@ namespace c969_scheduler_program
             AllUserScheduleForm frm = new AllUserScheduleForm();
             frm.Show();
         }
+
+        private void topCustomersBtn_Click(object sender, EventArgs e)
+        {
+            CustomerEngagementForm frm = new CustomerEngagementForm();
+            frm.Show();
+        }
     }
 }

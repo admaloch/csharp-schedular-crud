@@ -47,6 +47,24 @@ namespace c969_scheduler_program.Services
                 })
                 .ToList();
         }
+        public static Object GetCustomerEngagementReport()
+        {
+            return Appointment.GetAllAppointments()
+                .GroupBy(a => a.CustomerId)
+                .Select(g => new CustomerEngagement
+                {
+                    CustomerId = g.Key,
+                    CustomerName = Customer.GetCustomerById(g.Key)?.CustomerName ?? "Unknown",
+                    TotalAppointments = g.Count(),
+                    FirstAppointment = g.Min(a => a.Start),
+                    LastAppointment = g.Max(a => a.Start),
+                    FavoriteType = g.GroupBy(a => a.Type)
+                                  .OrderByDescending(x => x.Count())
+                                  .First().Key
+                })
+                .OrderByDescending(x => x.TotalAppointments)
+                .ToList();
+        }
     }
 }
 

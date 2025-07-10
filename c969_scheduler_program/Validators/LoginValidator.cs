@@ -8,8 +8,6 @@ using System.Windows.Forms;
 
 namespace c969_scheduler_program.Validators
 {
-
-
     public static class LoginValidator
     {
         // Validate the form inputs only (UI validation)

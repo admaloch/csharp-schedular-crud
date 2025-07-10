@@ -75,6 +75,7 @@
             this.topCustomersBtn.TabIndex = 3;
             this.topCustomersBtn.Text = "Top customers";
             this.topCustomersBtn.UseVisualStyleBackColor = true;
+            this.topCustomersBtn.Click += new System.EventHandler(this.topCustomersBtn_Click);
             // 
             // MainReports
             // 

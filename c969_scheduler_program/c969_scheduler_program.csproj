@@ -124,6 +124,12 @@
       <DependentUpon>ApptTypesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Constants\FileLocations.cs" />
+    <Compile Include="CustomerEngagementForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomerEngagementForm.Designer.cs">
+      <DependentUpon>CustomerEngagementForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Customers.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -158,6 +164,7 @@
     <Compile Include="Models\CurrentUser.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Reports\AppointmentTypeByMonth.cs" />
+    <Compile Include="Models\Reports\CustomerEngagement.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="ModifyAppointment.cs">
       <SubType>Form</SubType>
@@ -195,6 +202,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ApptTypesForm.resx">
       <DependentUpon>ApptTypesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomerEngagementForm.resx">
+      <DependentUpon>CustomerEngagementForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Customers.resx">
       <DependentUpon>Customers.cs</DependentUpon>
