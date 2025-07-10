@@ -64,6 +64,7 @@
             this.userScheduleBtn.TabIndex = 2;
             this.userScheduleBtn.Text = "All users\' schedules";
             this.userScheduleBtn.UseVisualStyleBackColor = true;
+            this.userScheduleBtn.Click += new System.EventHandler(this.userScheduleBtn_Click);
             // 
             // topCustomersBtn
             // 

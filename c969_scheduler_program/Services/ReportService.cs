@@ -29,6 +29,25 @@ namespace c969_scheduler_program.Services
                 .OrderBy(x => DateTime.Parse(x.MonthDisplay)) // Chronological sort
                 .ToList();
         }
+        public static object GetUserSchedules()
+        {
+            // Join with User table to get usernames
+            return Appointment.GetAllAppointments()
+                .OrderBy(a => a.UserId)
+                .ThenBy(a => a.Start)
+                .Select(a => new  // Anonymous type for binding
+                {
+                    User = User.GetById(a.UserId)?.UserName ?? "Unknown",
+                    a.UserId,
+                    a.CustomerName,
+                    a.Title,
+                    a.Type,
+                    Start = a.Start.ToString("MM/dd/yyyy hh:mm tt"),
+                    End = a.End.ToString("MM/dd/yyyy hh:mm tt"),
+                    a.Location
+                })
+                .ToList();
+        }
     }
 }
 

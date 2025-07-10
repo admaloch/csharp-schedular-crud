@@ -1,6 +1,7 @@
 ﻿
 using c969_scheduler_program.Models.Reports;
 using c969_scheduler_program.Services;
+using c969_scheduler_program.Utils;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -18,7 +19,6 @@ namespace c969_scheduler_program
             var apptsByMonth = ReportService.GetAppointmentTypesByMonth();
             apptMonthDgv.DataSource = apptsByMonth;
             this.Load += ApptTypesForm_Load;
-
         }
 
         private void ApptTypesForm_Load(object sender, EventArgs e)
@@ -27,7 +27,6 @@ namespace c969_scheduler_program
         }
         private void FormatDgv()
         {
-
 
             // Make all cells read-only
             apptMonthDgv.ReadOnly = true;

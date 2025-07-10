@@ -22,5 +22,11 @@ namespace c969_scheduler_program
             ApptTypesForm frm = new ApptTypesForm();
             frm.Show();
         }
+
+        private void userScheduleBtn_Click(object sender, EventArgs e)
+        {
+            AllUserScheduleForm frm = new AllUserScheduleForm();
+            frm.Show();
+        }
     }
 }

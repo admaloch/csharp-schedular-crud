@@ -9,6 +9,7 @@ namespace c969_scheduler_program.Models
     public class Appointment
     {
         public int AppointmentId { get; set; }
+        public int UserId { get; set; }
         public string CustomerName { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
@@ -60,6 +61,7 @@ namespace c969_scheduler_program.Models
                             {
                                 AppointmentId = reader.GetInt32("appointmentId"),
                                 CustomerId = reader.GetInt32("customerId"),
+                                UserId = reader.GetInt32("userId"),
                                 CustomerName = reader.GetString("customerName"),
                                 Title = reader.GetString("title"),
                                 Type = reader.GetString("type"),
@@ -119,6 +121,7 @@ namespace c969_scheduler_program.Models
                             {
                                 AppointmentId = reader.GetInt32("appointmentId"),
                                 CustomerId = reader.GetInt32("customerId"),
+                                UserId = reader.GetInt32("userId"),
                                 CustomerName = reader.GetString("customerName"),
                                 Title = reader.GetString("title"),
                                 Type = reader.GetString("type"),
@@ -171,6 +174,7 @@ namespace c969_scheduler_program.Models
                             {
                                 AppointmentId = reader.GetInt32("appointmentId"),
                                 CustomerId = reader.GetInt32("customerId"),
+                                UserId = reader.GetInt32("userId"),
                                 CustomerName = reader.GetString("customerName"),
                                 Title = reader.GetString("title"),
                                 Type = reader.GetString("type"),
