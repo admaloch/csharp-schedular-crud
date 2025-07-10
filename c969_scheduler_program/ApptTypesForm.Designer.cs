@@ -45,6 +45,9 @@
             // 
             // apptMonthDgv
             // 
+            this.apptMonthDgv.AllowUserToAddRows = false;
+            this.apptMonthDgv.AllowUserToDeleteRows = false;
+            this.apptMonthDgv.AllowUserToOrderColumns = true;
             this.apptMonthDgv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.apptMonthDgv.Location = new System.Drawing.Point(143, 105);
             this.apptMonthDgv.Name = "apptMonthDgv";
