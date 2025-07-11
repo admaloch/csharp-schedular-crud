@@ -30,7 +30,7 @@ namespace c969_scheduler_program
         }
         private void SetSelectedDateApptsDgv() //populate dgv
         {
-            appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, selectedDate);
+            appointments = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, selectedDate);
             AppointmentUtils.SetSelectedDateApptsDgvHelper(appointments, apptDgv);
         }
 

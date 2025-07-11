@@ -249,7 +249,7 @@ namespace c969_scheduler_program.Models
                         cmd.Parameters.AddWithValue("@customerId", customer.CustomerId);
                         cmd.Parameters.AddWithValue("@customerName", customer.CustomerName);
                         cmd.Parameters.AddWithValue("@isActive", customer.IsActive);
-                        cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                        cmd.Parameters.AddWithValue("@lastUpdateBy", User.CurrentUserName);
                         cmd.Parameters.AddWithValue("@lastUpdate", DateTime.UtcNow);
                         cmd.ExecuteNonQuery();
                     }
@@ -270,7 +270,7 @@ namespace c969_scheduler_program.Models
                         cmd.Parameters.AddWithValue("@address2", customer.Address2);
                         cmd.Parameters.AddWithValue("@postalCode", customer.PostalCode);
                         cmd.Parameters.AddWithValue("@phone", customer.Phone);
-                        cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                        cmd.Parameters.AddWithValue("@lastUpdateBy", User.CurrentUserName);
                         cmd.ExecuteNonQuery();
                     }
 
@@ -284,7 +284,7 @@ namespace c969_scheduler_program.Models
                     {
                         cmd.Parameters.AddWithValue("@cityId", customer.CityId);
                         cmd.Parameters.AddWithValue("@city", customer.City);
-                        cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                        cmd.Parameters.AddWithValue("@lastUpdateBy", User.CurrentUserName);
                         cmd.ExecuteNonQuery();
                     }
 
@@ -298,7 +298,7 @@ namespace c969_scheduler_program.Models
                     {
                         cmd.Parameters.AddWithValue("@countryId", customer.CountryId);
                         cmd.Parameters.AddWithValue("@country", customer.Country);
-                        cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                        cmd.Parameters.AddWithValue("@lastUpdateBy", User.CurrentUserName);
                         cmd.ExecuteNonQuery();
                     }
 
@@ -320,12 +320,12 @@ namespace c969_scheduler_program.Models
 
         public static bool AddCustomer(Customer customer)
         {
-            int countryId = InsertCountry(customer.Country, CurrentUser.UserName);
+            int countryId = InsertCountry(customer.Country, User.CurrentUserName);
             if (countryId == -1)
             {
                 return false;
             }
-            int cityId = InsertCity(customer.City, countryId, CurrentUser.UserName);
+            int cityId = InsertCity(customer.City, countryId, User.CurrentUserName);
             if (cityId == -1)
             {
                 return false;
@@ -336,13 +336,13 @@ namespace c969_scheduler_program.Models
                 cityId,
                 customer.PostalCode,
                 customer.Phone,
-                CurrentUser.UserName
+                User.CurrentUserName
             );
             if (addressId == -1)
             {
                 return false;
             }
-            int customerId = InsertCustomer(customer.CustomerName, addressId, CurrentUser.UserName, customer.IsActive);
+            int customerId = InsertCustomer(customer.CustomerName, addressId, User.CurrentUserName, customer.IsActive);
             if (customerId == -1)
             {
                 return false;

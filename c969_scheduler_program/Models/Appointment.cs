@@ -220,7 +220,7 @@ namespace c969_scheduler_program.Models
                 using (var cmd = new MySqlCommand(query, DBUtils.GetConnection()))
                 {
                     cmd.Parameters.AddWithValue("@customerId", appt.CustomerId);
-                    cmd.Parameters.AddWithValue("@userId", CurrentUser.UserId);
+                    cmd.Parameters.AddWithValue("@userId", User.CurrentUserId);
                     cmd.Parameters.AddWithValue("@title", appt.Title);
                     cmd.Parameters.AddWithValue("@description", appt.Description);
                     cmd.Parameters.AddWithValue("@location", appt.Location);
@@ -235,8 +235,8 @@ namespace c969_scheduler_program.Models
                     cmd.Parameters.AddWithValue("@createDate", DateTime.UtcNow);
                     cmd.Parameters.AddWithValue("@lastUpdate", DateTime.UtcNow);
 
-                    cmd.Parameters.AddWithValue("@createdBy", CurrentUser.UserName);
-                    cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                    cmd.Parameters.AddWithValue("@createdBy", User.CurrentUserName);
+                    cmd.Parameters.AddWithValue("@lastUpdateBy", User.CurrentUserName);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -280,7 +280,7 @@ namespace c969_scheduler_program.Models
                 {
                     cmd.Parameters.AddWithValue("@appointmentId", appt.AppointmentId);
                     cmd.Parameters.AddWithValue("@customerId", appt.CustomerId);
-                    cmd.Parameters.AddWithValue("@userId", CurrentUser.UserId); // or appt.UserId if stored
+                    cmd.Parameters.AddWithValue("@userId", User.CurrentUserId); // or appt.UserId if stored
                     cmd.Parameters.AddWithValue("@title", appt.Title);
                     cmd.Parameters.AddWithValue("@description", appt.Description);
                     cmd.Parameters.AddWithValue("@location", appt.Location);
@@ -290,7 +290,7 @@ namespace c969_scheduler_program.Models
                     cmd.Parameters.AddWithValue("@start", Utilities.ConvertToUTC(appt.Start));
                     cmd.Parameters.AddWithValue("@end", Utilities.ConvertToUTC(appt.End));
                     cmd.Parameters.AddWithValue("@lastUpdate", DateTime.UtcNow);
-                    cmd.Parameters.AddWithValue("@lastUpdateBy", CurrentUser.UserName);
+                    cmd.Parameters.AddWithValue("@lastUpdateBy", User.CurrentUserName);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
                     return rowsAffected > 0;

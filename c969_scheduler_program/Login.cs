@@ -58,7 +58,7 @@ namespace c969_scheduler_program
             }
 
             // Step 3: Open dashboard, close login when dashboard closes
-            Logger.LogLogin(CurrentUser.UserName);
+            Logger.LogLogin(User.CurrentUserName);
             this.Hide();
             Dashboard frm = new Dashboard();
             frm.FormClosed += (s, args) => this.Close(); // Closes login when dashboard exits
@@ -76,7 +76,7 @@ namespace c969_scheduler_program
 
             if (isAuthenticated)
             {
-                Logger.LogLogin(CurrentUser.UserName);
+                Logger.LogLogin(User.CurrentUserName);
                 this.Hide();
                 Dashboard dashboard = new Dashboard();
                 dashboard.FormClosed += (s, args) => this.Close();

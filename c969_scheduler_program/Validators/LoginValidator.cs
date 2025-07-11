@@ -78,7 +78,8 @@ namespace c969_scheduler_program.Validators
                         {
                             int userId = reader.GetInt32("userId");
                             string userName = reader.GetString("userName");
-                            CurrentUser.SetUser(userId, userName);
+                            User.CurrentUserId = userId;
+                            User.CurrentUserName = userName;
 
                             return (true, "Login successful\nInicio de sesión exitoso.");
                         }

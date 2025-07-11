@@ -27,7 +27,7 @@ namespace c969_scheduler_program
 
         private void SetSelectedDateApptsDgv() //populate dgv
         {
-            appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, GetSelectedCalendarDate());
+            appointments = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, GetSelectedCalendarDate());
             AppointmentUtils.SetSelectedDateApptsDgvHelper(appointments, apptDgv);
         }
         private void monthCalendar_DateChanged(object sender, DateRangeEventArgs e)

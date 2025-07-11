@@ -161,7 +161,6 @@
       <DependentUpon>MainReports.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Appointment.cs" />
-    <Compile Include="Models\CurrentUser.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Reports\AppointmentTypeByMonth.cs" />
     <Compile Include="Models\Reports\CustomerEngagement.cs" />
@@ -185,7 +184,6 @@
     <Compile Include="Utils\DbUtils.cs" />
     <Compile Include="Utils\DgvFormatUtils.cs" />
     <Compile Include="Utils\Logger.cs" />
-    <Compile Include="Utils\NewAppointmentUtils.cs" />
     <Compile Include="Utils\Utils.cs" />
     <Compile Include="Utils\ValidationUtils.cs" />
     <Compile Include="Validators\AppointmentValidator.cs" />

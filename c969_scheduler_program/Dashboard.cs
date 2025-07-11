@@ -19,11 +19,12 @@ namespace c969_scheduler_program
         {
             InitializeValues();
             CreateApptReminderAlert();
+            Console.WriteLine($"curr user: {User.CurrentUserName}");
         }
 
         private void InitializeValues()
         {
-            usernameLbl.Text = $"Current user: {CurrentUser.UserName}";
+            usernameLbl.Text = $"Current user: {User.CurrentUserName}";
             timeZoneLbl.Text = $"TimeZone: {Utilities.GetUserTimeZone()}";
             regionLbl.Text = $"Region: {Utilities.GetUserRegion()}";
             usernameLbl.Left = (this.ClientSize.Width - usernameLbl.Width) / 2;
@@ -34,7 +35,7 @@ namespace c969_scheduler_program
         private async void CreateApptReminderAlert()
         {
             await Task.Delay(1500);
-            var todaysAppts = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, DateTime.Today);
+            var todaysAppts = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, DateTime.Today);
             DateTime delayTime = DateTime.Now.AddMinutes(15);
             var upcomingAppt = todaysAppts.FirstOrDefault(appt => appt.Start > DateTime.Now && appt.Start < delayTime);
             if (upcomingAppt != null)

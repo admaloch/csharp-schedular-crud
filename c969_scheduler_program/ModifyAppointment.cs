@@ -42,7 +42,7 @@ namespace c969_scheduler_program
         }
         private void SetApptSlotsComboBoxVals()
         {
-            appointments = Appointment.GetAppointmentsForUserByDate(CurrentUser.UserId, selectedDate);
+            appointments = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, selectedDate);
             AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments, currAppointment);
         }
         private void SetSelectedDateApptDgv()
