@@ -232,6 +232,7 @@
             this.aptTimeComboBox.Name = "aptTimeComboBox";
             this.aptTimeComboBox.Size = new System.Drawing.Size(217, 21);
             this.aptTimeComboBox.TabIndex = 62;
+            this.aptTimeComboBox.SelectedIndexChanged += new System.EventHandler(this.aptTimeComboBox_SelectedIndexChanged);
             // 
             // label7
             // 

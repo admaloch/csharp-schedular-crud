@@ -16,6 +16,7 @@ namespace c969_scheduler_program
         {
             InitializeComponent();
             selectedDate = date;
+            appointments = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, selectedDate);
             this.Load += AddAppointment_Load;
         }
         private void AddAppointment_Load(object sender, EventArgs e)
@@ -24,14 +25,24 @@ namespace c969_scheduler_program
             InitializeInputEvents();
             SetSelectedDateApptsDgv();
             AppointmentUtils.SetCustomerComboBoxVals(customerComboBox);
-            AppointmentUtils.SetApptDurationComboBoxVals(durationComboBox, appointments, selectedDate);
+            SetTempDurationVals();
             AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments);
             AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);
+            AppointmentUtils.SetApptDurationComboBoxVals2(durationComboBox, aptTimeComboBox, appointments, selectedDate);
+
         }
         private void SetSelectedDateApptsDgv() //populate dgv
         {
             appointments = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, selectedDate);
             AppointmentUtils.SetSelectedDateApptsDgvHelper(appointments, apptDgv);
+        }
+
+        private void SetTempDurationVals()
+        {
+            durationComboBox.Items.Clear();
+            durationComboBox.Items.Add("15");
+            durationComboBox.Items.Add("30");
+            durationComboBox.SelectedIndex = 1;
         }
 
         private void InitializeInputEvents()
@@ -90,17 +101,22 @@ namespace c969_scheduler_program
 
         private void durationComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (appointments == null)
-            {
-                return;
-            }
-
             AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments);
         }
+        private void aptTimeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // temp remove the duration ComboBox event to avoid infinite loop
+            durationComboBox.SelectedIndexChanged -= durationComboBox_SelectedIndexChanged;
 
+            AppointmentUtils.SetApptDurationComboBoxVals2(durationComboBox, aptTimeComboBox, appointments, selectedDate);
+
+            // reattach
+            durationComboBox.SelectedIndexChanged += durationComboBox_SelectedIndexChanged;
+        }
         private void exitBtn_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
     }
 }

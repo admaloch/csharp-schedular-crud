@@ -4,7 +4,6 @@ using c969_scheduler_program.Validators;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace c969_scheduler_program
 {
@@ -17,6 +16,7 @@ namespace c969_scheduler_program
         {
             InitializeComponent(); // Must come first
             currAppointment = appointment;
+            appointments = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, selectedDate);
             // Delay this until the form is loaded fully
             this.Load += ModifyAppointment_Load;
         }
@@ -34,12 +34,16 @@ namespace c969_scheduler_program
             monthCalendar.SetDate(selectedDate);
             dateLbl.Text = $"Date: {currAppointment.Start}";
 
-            AppointmentUtils.SetApptDurationComboBoxVals(durationComboBox, appointments, selectedDate);
-            AppointmentUtils.SetCustomerComboBoxVals(customerComboBox);
             InitializeInputEvents();
-            SetInitialInputValues(); // prefill form inputs
-            SetSelectedDateApptDgv(); // If this uses currAppointment, it's now safe
+            SetSelectedDateApptDgv();
+            SetInitialInputValues();
+
+            AppointmentUtils.SetCustomerComboBoxVals(customerComboBox);
+
+            AppointmentUtils.SetApptDurationComboBoxVals2(durationComboBox, aptTimeComboBox, appointments, selectedDate);
+
         }
+
         private void SetApptSlotsComboBoxVals()
         {
             appointments = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, selectedDate);
@@ -57,8 +61,6 @@ namespace c969_scheduler_program
             {
                 return;
             }
-            durationComboBox.Items.Add("15");
-            durationComboBox.Items.Add("30");
 
             titleTxt.Text = currAppointment.Title;
             typeTxt.Text = currAppointment.Type;
@@ -66,6 +68,12 @@ namespace c969_scheduler_program
             locationTxt.Text = currAppointment.Location;
             contactTxt.Text = currAppointment.Contact;
             urlTxt.Text = currAppointment.Url;
+
+            //set initial durationbox vals
+            durationComboBox.Items.Clear();
+            durationComboBox.Items.Add("15");
+            durationComboBox.Items.Add("30");
+            durationComboBox.SelectedIndex = 1;
 
             // Set customer combo box selection
             customerComboBox.SelectedValue = currAppointment.CustomerId;
@@ -161,12 +169,24 @@ namespace c969_scheduler_program
         }
         private void durationComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SetApptSlotsComboBoxVals();
+            AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments, currAppointment);
+        }
+
+        private void aptTimeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // temp remove the duration ComboBox event to avoid infinite loop
+            durationComboBox.SelectedIndexChanged -= durationComboBox_SelectedIndexChanged;
+
+            AppointmentUtils.SetApptDurationComboBoxVals2(durationComboBox, aptTimeComboBox, appointments, selectedDate);
+
+            // reattach
+            durationComboBox.SelectedIndexChanged += durationComboBox_SelectedIndexChanged;
         }
 
         private void exitBtn_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
     }
 }

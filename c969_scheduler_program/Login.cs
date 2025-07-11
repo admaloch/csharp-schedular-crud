@@ -48,7 +48,7 @@ namespace c969_scheduler_program
             }
 
             // Step 2: Try authenticating the user (DB auth + set CurrentUser)
-            var (isUserAuthenticated, loginMsg) = LoginValidator.TryLogin(usernameTxt.Text, passwordTxt.Text);
+            var (isUserAuthenticated, loginMsg) = DBUtils.TryLogin(usernameTxt.Text, passwordTxt.Text);
 
             MessageBox.Show(loginMsg, "Login Message", MessageBoxButtons.OK);
 
@@ -72,7 +72,7 @@ namespace c969_scheduler_program
             string testUsername = "echen";
             string testPassword = "pw12345";
 
-            var (isAuthenticated, message) = LoginValidator.TryLogin(testUsername, testPassword);
+            var (isAuthenticated, message) = DBUtils.TryLogin(testUsername, testPassword);
 
             if (isAuthenticated)
             {
