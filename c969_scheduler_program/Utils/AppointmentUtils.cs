@@ -25,6 +25,19 @@ namespace c969_scheduler_program.Utils
                 Console.WriteLine("Calc available appt slots failed becuase of no appointments list");
                 return;
             }
+
+            string modItemVal = "";
+            if (appointmentToIgnore != null)
+            {
+                modItemVal = appointmentToIgnore.Start.ToString("hh:mm tt");
+            }
+
+            string manuallySelectedVal = "";
+            if (aptTimeComboBox.SelectedIndex > 0)
+            {
+                manuallySelectedVal = aptTimeComboBox.Items[aptTimeComboBox.SelectedIndex].ToString();
+            }
+
             aptTimeComboBox.Items.Clear();
 
             if (!int.TryParse(durationComboBox.SelectedItem?.ToString(), out int durationMinutes) || durationMinutes <= 0)
@@ -37,28 +50,30 @@ namespace c969_scheduler_program.Utils
                 aptTimeComboBox.Items.Add(time.ToString("hh:mm tt"));
             }
 
-            if (appointmentToIgnore != null)
+
+            if (!string.IsNullOrEmpty(manuallySelectedVal) && manuallySelectedVal != modItemVal)
             {
-                Console.WriteLine($"curr appt time: {appointmentToIgnore.Start.ToString("hh:mm tt")}");
-                aptTimeComboBox.SelectedItem = appointmentToIgnore.Start.ToString("hh:mm tt");
+                aptTimeComboBox.SelectedItem = manuallySelectedVal;
                 return;
             }
 
+            if (!string.IsNullOrEmpty(modItemVal))
+            {
+                Console.WriteLine($"went to mod appt time");
+                aptTimeComboBox.SelectedItem = modItemVal;
+                return;
+            }
 
             if (aptTimeComboBox.Items.Count > 0)
                 aptTimeComboBox.SelectedIndex = 0;
-
-
         }
-
-
 
         public static List<DateTime> GetAvailableApptStartTimes(
                 DateTime selectedDate,
                 int durationMinutes,
                 List<Appointment> appointments,
                 Appointment appointmentToIgnore = null
-            )
+        )
         {
 
             var availableTimes = new List<DateTime>();
@@ -94,50 +109,6 @@ namespace c969_scheduler_program.Utils
             return availableTimes;
         }
 
-
-        public static void SetApptDurationComboBoxVals(ComboBox comboBox, List<Appointment> appointments, DateTime selectedDate)
-        {
-
-            if (appointments == null)
-            {
-                Console.WriteLine("Set appt duration failed because of no appointments list");
-                return;
-            }
-
-            // Store current selection
-            var prevSelected = comboBox.SelectedItem?.ToString();
-
-            comboBox.BeginUpdate();
-            try
-            {
-                comboBox.Items.Clear();
-                comboBox.Items.Add("15");
-                comboBox.Items.Add("30");
-
-                bool hasLongerSlot = AppointmentUtils
-                    .GetAvailableApptStartTimes(selectedDate, 60, appointments)
-                    .Any();
-
-                int defaultSlot = 1;
-
-                if (hasLongerSlot)
-                {
-                    comboBox.Items.Add("45");
-                    comboBox.Items.Add("60");
-                    defaultSlot = 3;
-                }
-
-                // Restore selection if possible
-                comboBox.SelectedIndex = prevSelected != null && comboBox.Items.Contains(prevSelected)
-                    ? comboBox.Items.IndexOf(prevSelected)
-                    : defaultSlot;
-            }
-            finally
-            {
-                comboBox.EndUpdate();
-            }
-        }
-
         public static void SetApptDurationComboBoxVals2(ComboBox durationComboBox, ComboBox apptComboBox, List<Appointment> appointments, DateTime selectedDate)
         {
 
@@ -148,7 +119,7 @@ namespace c969_scheduler_program.Utils
             }
 
             // Store current selection
-            var prevSelectedDuration = durationComboBox.SelectedItem?.ToString();
+            var currSelectedDuration = durationComboBox.SelectedItem?.ToString();
             var currAppt = DateTime.ParseExact(apptComboBox.SelectedItem.ToString(), "h:mm tt", CultureInfo.InvariantCulture);
             int nextIndex = -1;
             var nextAppt = currAppt;//set temporarily to currAppt
@@ -175,9 +146,23 @@ namespace c969_scheduler_program.Utils
                 }
 
                 // Restore selection if possible
-                durationComboBox.SelectedIndex = prevSelectedDuration != null && durationComboBox.Items.Contains(prevSelectedDuration)
-                    ? durationComboBox.Items.IndexOf(prevSelectedDuration)
-                    : 1;
+                //durationComboBox.SelectedIndex =
+                //    currSelectedDuration != null
+                //    && durationComboBox.Items.Contains(currSelectedDuration)
+                //        ? durationComboBox.Items.IndexOf(currSelectedDuration)
+                //        : 1;
+
+                if (currSelectedDuration != null
+                    && durationComboBox.Items.Contains(currSelectedDuration))
+                {
+                    durationComboBox.SelectedIndex = durationComboBox.Items.IndexOf(currSelectedDuration);
+                    Console.WriteLine($"selected Duration to previous val: {currSelectedDuration}");
+                }
+                else
+                {
+                    durationComboBox.SelectedIndex = 1;
+                    Console.WriteLine("Selected druation : Default to idx 1");
+                }
             }
             finally
             {

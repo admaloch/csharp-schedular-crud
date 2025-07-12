@@ -101,17 +101,22 @@ namespace c969_scheduler_program
 
         private void durationComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            //aptTimeComboBox.SelectedIndexChanged -= aptTimeComboBox_SelectedIndexChanged;
+
             AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments);
+
+            //aptTimeComboBox.SelectedIndexChanged += aptTimeComboBox_SelectedIndexChanged;
+
         }
         private void aptTimeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             // temp remove the duration ComboBox event to avoid infinite loop
-            durationComboBox.SelectedIndexChanged -= durationComboBox_SelectedIndexChanged;
+            //durationComboBox.SelectedIndexChanged -= durationComboBox_SelectedIndexChanged;
 
-            AppointmentUtils.SetApptDurationComboBoxVals2(durationComboBox, aptTimeComboBox, appointments, selectedDate);
+            //AppointmentUtils.SetApptDurationComboBoxVals2(durationComboBox, aptTimeComboBox, appointments, selectedDate);
 
-            // reattach
-            durationComboBox.SelectedIndexChanged += durationComboBox_SelectedIndexChanged;
+            //// reattach
+            //durationComboBox.SelectedIndexChanged += durationComboBox_SelectedIndexChanged;
         }
         private void exitBtn_Click(object sender, EventArgs e)
         {
