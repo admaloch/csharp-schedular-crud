@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace c969_scheduler_program.Utils
 {
@@ -14,7 +15,7 @@ namespace c969_scheduler_program.Utils
             int durationVal,
             List<Appointment> appointments,
             Appointment modApptItem = null
-    )
+        )
         {
 
             var allPossibleTimes = new List<DateTime>();
@@ -65,11 +66,25 @@ namespace c969_scheduler_program.Utils
 
                 }
             }
-            foreach (var time in allPossibleTimes)
-            {
-                Console.WriteLine(time.ToString());
-            }
+
             return allPossibleTimes;
         }
+        //public static void SetApptTimesComboBox(
+        //    DateTime selectedDate,
+        //    int durationVal,
+        //    List<Appointment> appointments,
+        //    ComboBox aptTimeComboBox,
+        //    Appointment modApptItem = null
+
+        //)
+        //{
+        //    var apptStartTimes = GetAvailableApptStartTimes(selectedDate, durationVal, appointments, modApptItem);
+
+        //    aptTimeComboBox.Items.Clear();
+        //    foreach (var time in apptStartTimes)
+        //    {
+        //        aptTimeComboBox.Items.Add(time.ToString("hh:mm tt"));
+        //    }
+        //}
     }
 }
