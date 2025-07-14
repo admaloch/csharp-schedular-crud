@@ -26,7 +26,7 @@ namespace c969_scheduler_program
             {
                 aptTimeComboBox.SelectedIndex = 0;
             }
-            SetTempDurationVals();
+            SetInitDurationVals();
             this.Load += AddAppointment_Load;
         }
         private void AddAppointment_Load(object sender, EventArgs e)
@@ -45,7 +45,7 @@ namespace c969_scheduler_program
             AppointmentUtils.SetSelectedDateApptsDgvHelper(appointments, apptDgv);
         }
 
-        private void SetTempDurationVals()
+        private void SetInitDurationVals()
         {
             durationComboBox.Items.Clear();
             durationComboBox.Items.Add("15");
@@ -64,7 +64,6 @@ namespace c969_scheduler_program
             {
                 aptTimeComboBox.Items.Add(time.ToString("hh:mm tt"));
             }
-
         }
 
         private void SetDurationComboBox()

@@ -76,5 +76,12 @@ namespace c969_scheduler_program.Utils
             return Convert.ToInt32(dgv.CurrentRow.Cells[0].Value);
         }
 
+        public static DateTime ConvertToDateTime(string selectedItem, DateTime selectedDate)
+        {
+            DateTime.TryParseExact(selectedItem, "hh:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime timePart);
+            DateTime selectedSlotTime = selectedDate.Date.Add(timePart.TimeOfDay);
+            return selectedSlotTime;
+        }
+
     }
 }
