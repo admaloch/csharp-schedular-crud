@@ -8,6 +8,10 @@ namespace c969_scheduler_program.Utils
 {
     internal class AppointmentUtils2
     {
+        //---- Helper funcs for add and modify appointments -- a lot of the same logic
+
+        //look at appointments list and moditem if any -- also cur durrationComboBox value -- create a list of possible times
+        //ex. if 45 or 60 min is set for durationComboBox only push out slots that can be longer than 30 min
         public static List<DateTime> GetAvailableApptStartTimes(
             DateTime selectedDate,
             int durationVal,
@@ -66,6 +70,22 @@ namespace c969_scheduler_program.Utils
 
             return allPossibleTimes;
         }
+
+
+        //populate apptTimesComboBox with GetAvailableApptStartTimes method above ^
+        public static void SetApptTimesComboBox(int duration, ComboBox aptTimeComboBox, DateTime selectedDate, List<Appointment> appointments)
+        {
+            var apptStartTimes = GetAvailableApptStartTimes(selectedDate, duration, appointments);
+            aptTimeComboBox.Items.Clear();
+
+            foreach (var time in apptStartTimes)
+            {
+                aptTimeComboBox.Items.Add(time.ToString("hh:mm tt"));
+            }
+        }
+
+        //helper for durationComboBox event listener 
+        //look at some conditions to determine if the items in the apptTimesComboBox need to be updated based on durationComboBox value change
         public static void UpdateApptTimesOnDurationChange(ComboBox durationComboBox, ComboBox aptTimeComboBox, int prevDurationIdx, DateTime selectedDate, List<Appointment> appointments)
         {
             int newDurationIdx = durationComboBox.SelectedIndex;
@@ -87,17 +107,8 @@ namespace c969_scheduler_program.Utils
             }
         }
 
-        public static void SetApptTimesComboBox(int duration, ComboBox aptTimeComboBox, DateTime selectedDate, List<Appointment> appointments)
-        {
-            var apptStartTimes = AppointmentUtils2.GetAvailableApptStartTimes(selectedDate, duration, appointments);
-            aptTimeComboBox.Items.Clear();
-
-            foreach (var time in apptStartTimes)
-            {
-                aptTimeComboBox.Items.Add(time.ToString("hh:mm tt"));
-            }
-        }
-
+        //helpter for aptTimesComboBox event listner
+        // determine if the duractionComboBox values need to change based on the current selected appointment slot
         public static void SetDurationComboBox(ComboBox durationComboBox, ComboBox aptTimeComboBox, DateTime selectedDate)
         {
             //Console.WriteLine("set duration method ran");
@@ -146,6 +157,7 @@ namespace c969_scheduler_program.Utils
             }
         }
 
+        //set default duration values
         public static void SetInitDurationVals(ComboBox durationComboBox)
         {
             durationComboBox.Items.Clear();
@@ -155,8 +167,6 @@ namespace c969_scheduler_program.Utils
             durationComboBox.Items.Add("60");
             durationComboBox.SelectedIndex = 1;
         }
-
-
 
     }
 }
