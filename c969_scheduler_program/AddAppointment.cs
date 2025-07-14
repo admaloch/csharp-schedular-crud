@@ -4,6 +4,7 @@ using c969_scheduler_program.Validators;
 using Google.Protobuf.WellKnownTypes;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace c969_scheduler_program
@@ -25,6 +26,7 @@ namespace c969_scheduler_program
             {
                 aptTimeComboBox.SelectedIndex = 0;
             }
+            SetTempDurationVals();
             this.Load += AddAppointment_Load;
         }
         private void AddAppointment_Load(object sender, EventArgs e)
@@ -32,7 +34,6 @@ namespace c969_scheduler_program
             dateLbl.Text = $"Date: {selectedDate.ToShortDateString()}";
             InitializeInputEvents();
             SetSelectedDateApptsDgv();
-            SetTempDurationVals();
 
 
 
@@ -61,17 +62,9 @@ namespace c969_scheduler_program
 
             foreach (var time in apptStartTimes)
             {
-                // Add an anonymous object with both Value and Display
-                aptTimeComboBox.Items.Add(new
-                {
-                    Value = time,          // Store DateTime
-                    Display = time.ToString("hh:mm tt")  // Store formatted string
-                });
+                aptTimeComboBox.Items.Add(time.ToString("hh:mm tt"));
             }
 
-            // Tell ComboBox which properties to use
-            aptTimeComboBox.DisplayMember = "Display"; // What to show
-            aptTimeComboBox.ValueMember = "Value";    // Hidden value
         }
 
         private void SetDurationComboBox()
@@ -79,30 +72,31 @@ namespace c969_scheduler_program
             //Console.WriteLine("set duration method ran");
 
             //if duration dropwdown on 45 or 60 it restricts appt slots lower than 45 min so this can't change
-            bool isDurationChangePossible = aptTimeComboBox.Items.Count == 0 || durationComboBox.SelectedIndex == 2 || durationComboBox.SelectedIndex == 3;
+            bool isDurationChangePossible = aptTimeComboBox.Items.Count == 0 || durationComboBox.Items.Count == 0 || durationComboBox.SelectedIndex == 2 || durationComboBox.SelectedIndex == 3;
             if (isDurationChangePossible)
             {
                 return;
             }
 
-            //grab curr item and next item if next item is in 30 mins that means a 45 or 60 min appt is possible
-            dynamic selectedItem = aptTimeComboBox.SelectedItem;
-            DateTime selectedSlotTime = selectedItem.Value; // Now works!
+            //grab curr selected apt time -- convert to date to check if there is an appt in 30 min
+            string selectedItem = aptTimeComboBox.SelectedItem.ToString();
+            DateTime selectedSlotTime = ConvertToDateTime(selectedItem);
             DateTime thirtyMinTestVal = selectedSlotTime.AddMinutes(30);
-            DateTime nextSlotTime;
 
-            //see if curent item is last item... and make sure it isn't 4:30 which can't be longer than 30 mins
-            int nextItemIdx = aptTimeComboBox.SelectedIndex + 1;
-            bool isSixtyminPossible = true;
+
             //test if there is a following item and that it isn't the last appt of hte day
-            if (nextItemIdx != -1 && selectedItem.Value.TimeOfDay != new TimeSpan(16, 30, 0))
+            //determine if 60 mins is or isn't possible then update at the end
+            int currentIndex = aptTimeComboBox.SelectedIndex;
+            bool isSixtyminPossible = true;
+            if (currentIndex >= 0 && currentIndex < aptTimeComboBox.Items.Count - 1 && selectedSlotTime.TimeOfDay != new TimeSpan(16, 30, 0))
             {
                 //Console.WriteLine("apt time combo index changed");
 
-                var nextItem = (dynamic)aptTimeComboBox.Items[aptTimeComboBox.SelectedIndex + 1];
-                nextSlotTime = nextItem.Value;
+                string nextSlotTime = aptTimeComboBox.Items[currentIndex + 1].ToString();
+                DateTime nextSlotDateTime = ConvertToDateTime(nextSlotTime);
 
-                if (nextSlotTime != null && nextSlotTime == thirtyMinTestVal)
+
+                if (nextSlotTime != null && nextSlotDateTime == thirtyMinTestVal)
                 {
                     //Console.WriteLine("there is a following appt 30 mins later so 60 mins is possible ");
 
@@ -147,21 +141,17 @@ namespace c969_scheduler_program
             }
         }
 
-        private void InitializeInputEvents()
+        private DateTime ConvertToDateTime(string selectedItem)
         {
-            nameTxt.TextChanged += SharedInputChanged;
-            typeTxt.TextChanged += SharedInputChanged;
-            locationTxt.TextChanged += SharedInputChanged;
-        }
-        private void SharedInputChanged(object sender, EventArgs e)//connect inputs into shared listener
-        {
-            AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);
+            DateTime.TryParseExact(selectedItem, "hh:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime timePart);
+            DateTime selectedSlotTime = selectedDate.Date.Add(timePart.TimeOfDay);
+            return selectedSlotTime;
         }
 
-        private void durationComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void UpdateApptTimesOnDurationChange()
         {
             int newDurationIdx = durationComboBox.SelectedIndex;
-            if (newDurationIdx == -1)
+            if (newDurationIdx == -1 || aptTimeComboBox.Items.Count == 0)
             {
                 return;
             }
@@ -171,31 +161,26 @@ namespace c969_scheduler_program
 
             if (changedToShorterDuration || changedToLongerDuration)
             {
-                dynamic initialApptItem = aptTimeComboBox.SelectedItem;
-                string initialApptDisplay = initialApptItem.Display;
-
-                SetApptTimesComboBox(changedToLongerDuration ? 60 : 30);
-
-                //Console.WriteLine($"prev duration idx = {prevDurationIdx} -- new duration idx = {newDurationIdx}");
-
-                prevDurationIdx = newDurationIdx;
-                aptTimeComboBox.SelectedValue = initialApptDisplay;
-                foreach (var item in aptTimeComboBox.Items)
-                {
-                    if (((dynamic)item).Display == initialApptDisplay)
-                    {
-                        Console.WriteLine($"Found a match -- comboitem: {((dynamic)item).Display} -- initial val: {initialApptDisplay}");
-                        aptTimeComboBox.SelectedValue = ((dynamic)item).Display;
-                        break;
-                    }
-                }
-
+                string initialApptItem = aptTimeComboBox.SelectedItem.ToString();//remember prev time
+                SetApptTimesComboBox(changedToLongerDuration ? 60 : 30);//reset combobox times
+                aptTimeComboBox.SelectedItem = initialApptItem;//set to remembered time ^
+                prevDurationIdx = newDurationIdx; //update prevDuration idx with new idx val
             }
+        }
+
+        private void durationComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateApptTimesOnDurationChange();
         }
         private void aptTimeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             SetDurationComboBox();
         }
+
+
+
+
+
 
         private void submitBtn_Click(object sender, EventArgs e)
         {
@@ -244,6 +229,16 @@ namespace c969_scheduler_program
         private void exitBtn_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+        private void InitializeInputEvents()
+        {
+            nameTxt.TextChanged += SharedInputChanged;
+            typeTxt.TextChanged += SharedInputChanged;
+            locationTxt.TextChanged += SharedInputChanged;
+        }
+        private void SharedInputChanged(object sender, EventArgs e)//connect inputs into shared listener
+        {
+            AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);
         }
 
     }
