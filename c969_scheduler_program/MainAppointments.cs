@@ -1,6 +1,7 @@
 ﻿using c969_scheduler_program.Models;
 using c969_scheduler_program.Utils;
 using Google.Protobuf.WellKnownTypes;
+using MySqlX.XDevAPI.Common;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -47,7 +48,6 @@ namespace c969_scheduler_program
             }
 
             List<DateTime> availableSlots = AppointmentUtils.GetAvailableApptStartTimes(GetSelectedCalendarDate(), 30, appointments);
-            Console.WriteLine(availableSlots.Count);
 
             if (availableSlots.Count == 0)
             {
@@ -94,6 +94,7 @@ namespace c969_scheduler_program
                 MessageBox.Show("Please select a customer to modify.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
+
             int appointmentId = Utilities.GrabDgvRowId(apptDgv);
             Appointment currAppointment = Appointment.GetAppointmentById(appointmentId);
             if (currAppointment.Start < DateTime.Now)
@@ -101,14 +102,29 @@ namespace c969_scheduler_program
                 MessageBox.Show("Cannot delete appointment on a past date.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            var result = Appointment.DeleteAppointment(appointmentId);
-            if (!result)
+
+            // Show confirmation dialog
+            DialogResult userResponse = MessageBox.Show(
+                "Are you sure you want to delete this appointment?",
+                "Confirm Deletion",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2);
+
+            if (userResponse == DialogResult.Yes)
             {
-                MessageBox.Show("Unable to delete appointment.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                var result = Appointment.DeleteAppointment(appointmentId);
+                if (!result)
+                {
+                    MessageBox.Show("Unable to delete appointment.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                MessageBox.Show($"Appointment deleted!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                SetSelectedDateApptsDgv();
             }
-            MessageBox.Show($"Appointment deleted!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            SetSelectedDateApptsDgv();
+
+
         }
 
         private void exitBtn_Click(object sender, EventArgs e)

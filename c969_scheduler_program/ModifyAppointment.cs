@@ -10,49 +10,55 @@ namespace c969_scheduler_program
     public partial class ModifyAppointment : Form
     {
         private Appointment currAppointment;
+        private DateTime selectedDate;
+        private DateTime initialDate;
         private List<Appointment> appointments;
-        DateTime selectedDate;
+        private int prevDurationIdx = -1;
+        private bool _isFormLoaded = false;
+        private DateTime currSelectedApptSlot;
+
         public ModifyAppointment(Appointment appointment)
         {
             InitializeComponent(); // Must come first
             currAppointment = appointment;
+            selectedDate = currAppointment.Start.Date;
+            initialDate = currAppointment.Start.Date;
             appointments = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, selectedDate);
-            // Delay this until the form is loaded fully
+            monthCalendar.SetDate(selectedDate);
+            AppointmentUtils.SetApptTimesComboBox(
+                Utilities.CalculateDurationMinutes(currAppointment.Start, currAppointment.End),
+                aptTimeComboBox,
+                selectedDate,
+                appointments,
+                selectedDate == initialDate ? currAppointment : null
+            );//set initial values for aptComboBox
             this.Load += ModifyAppointment_Load;
         }
+
         private void ModifyAppointment_Load(object sender, EventArgs e)
         {
+            CheckIfCurrentAppt();
+            InitializeInputEvents();
+            var currApptAsList = new List<Appointment> { currAppointment };//dgv method below expects a list 
+            AppointmentUtils.SetSelectedDateApptsDgvHelper(currApptAsList, apptDgv);//populate appointments dgv
+            AppointmentUtils.SetCustomerComboBoxVals(customerComboBox); //populate customer dropdown
+            SetInitialInputValues();
+            currSelectedApptSlot = DateTime.Parse(aptTimeComboBox.SelectedItem.ToString());
+            AppointmentUtils.SetDurationComboBox(durationComboBox, aptTimeComboBox, selectedDate);
 
+            _isFormLoaded = true;
+        }
+
+
+
+        private void CheckIfCurrentAppt()
+        {
             if (currAppointment == null)//check if currAppointment exists
             {
                 MessageBox.Show("Appointment not found.");
                 this.Close();
                 return;
             }
-
-            selectedDate = currAppointment.Start.Date;
-            monthCalendar.SetDate(selectedDate);
-            dateLbl.Text = $"Date: {currAppointment.Start}";
-
-            InitializeInputEvents();
-            SetSelectedDateApptDgv();
-            SetInitialInputValues();
-
-            AppointmentUtils.SetCustomerComboBoxVals(customerComboBox);
-            SetApptSlotsComboBoxVals();
-
-            AppointmentUtils.SetApptDurationComboBoxVals2(durationComboBox, aptTimeComboBox, appointments, selectedDate);
-        }
-
-        private void SetApptSlotsComboBoxVals()
-        {
-            appointments = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, selectedDate);
-            AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments, currAppointment);
-        }
-        private void SetSelectedDateApptDgv()
-        {
-            var appointment = new List<Appointment> { currAppointment };
-            AppointmentUtils.SetSelectedDateApptsDgvHelper(appointment, apptDgv);
         }
 
         private void SetInitialInputValues()
@@ -61,6 +67,7 @@ namespace c969_scheduler_program
             {
                 return;
             }
+            dateLbl.Text = $"Date: {currAppointment.Start}";
 
             titleTxt.Text = currAppointment.Title;
             typeTxt.Text = currAppointment.Type;
@@ -69,42 +76,34 @@ namespace c969_scheduler_program
             contactTxt.Text = currAppointment.Contact;
             urlTxt.Text = currAppointment.Url;
 
-            //set initial durationbox vals
-            durationComboBox.Items.Clear();
             durationComboBox.Items.Add("15");
             durationComboBox.Items.Add("30");
-            durationComboBox.SelectedIndex = 1;
+            durationComboBox.Items.Add("45");
+            durationComboBox.Items.Add("60");
 
             // Set customer combo box selection
             customerComboBox.SelectedValue = currAppointment.CustomerId;
 
             // Set duration
-            int duration = (int)(currAppointment.End - currAppointment.Start).TotalMinutes;
+            int duration = Utilities.CalculateDurationMinutes(currAppointment.Start, currAppointment.End);
             if (durationComboBox.Items.Contains(duration.ToString()))
             {
                 durationComboBox.SelectedItem = duration.ToString();
             }
             else
             {
-                durationComboBox.SelectedIndex = 0; // fallback
+                durationComboBox.SelectedIndex = 0;
             }
 
             string timeString = currAppointment.Start.ToString("hh:mm tt");
 
-            bool matchFound = false;
             foreach (var item in aptTimeComboBox.Items)
             {
                 if (item.ToString().Trim().Equals(timeString, StringComparison.InvariantCultureIgnoreCase))
                 {
                     aptTimeComboBox.SelectedItem = item;
-                    matchFound = true;
                     break;
                 }
-            }
-
-            if (!matchFound && aptTimeComboBox.Items.Count > 0)
-            {
-                aptTimeComboBox.SelectedIndex = 0; // fallback
             }
 
         }
@@ -121,11 +120,62 @@ namespace c969_scheduler_program
 
         private void monthCalendar_DateChanged(object sender, DateRangeEventArgs e)
         {
+            if (!_isFormLoaded) return;
+
             selectedDate = monthCalendar.SelectionStart.Date;
-            SetApptSlotsComboBoxVals();
+
+            appointments = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, selectedDate);
+            if (appointments == null)
+            {
+                return;
+            }
+            AppointmentUtils.SetApptTimesComboBox(
+                Utilities.CalculateDurationMinutes(currAppointment.Start, currAppointment.End),
+                aptTimeComboBox,
+                selectedDate,
+                appointments,
+                selectedDate == initialDate ? currAppointment : null
+            );
+            if (aptTimeComboBox != null && aptTimeComboBox.Items.Count > 0)
+            {
+                DateTime closestTime = AppointmentUtils.FindClosestAvailableTime(currSelectedApptSlot, aptTimeComboBox);
+                aptTimeComboBox.SelectedItem = closestTime.ToString("hh:mm tt");
+            }
+            else
+            {
+                MessageBox.Show("No appointments available on this date", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
         }
+        private void durationComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!_isFormLoaded) return;
+            AppointmentUtils.UpdateApptTimesOnDurationChange(
+                durationComboBox,
+                aptTimeComboBox,
+                prevDurationIdx,
+                selectedDate,
+                appointments,
+                selectedDate == initialDate ? currAppointment : null
+            );
+        }
+
+        private void aptTimeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!_isFormLoaded) return;
+            AppointmentUtils.SetDurationComboBox(durationComboBox, aptTimeComboBox, selectedDate);
+            currSelectedApptSlot = DateTime.Parse(aptTimeComboBox.SelectedItem.ToString());
+
+        }
+
         private void submitBtn_Click(object sender, EventArgs e)
         {
+            if (aptTimeComboBox.Items.Count == 0)//if combobox is empty.. all appts are full
+            {
+                MessageBox.Show("There are no available appointments on this day", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             var (isValid, formErrors) = AppointmentValidator.ValidateAppointment(titleTxt, typeTxt, locationTxt);
             if (!isValid)
             {
@@ -167,21 +217,7 @@ namespace c969_scheduler_program
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
-        private void durationComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            AppointmentUtils.CalcAvailableApptSlots(aptTimeComboBox, durationComboBox, selectedDate, appointments, currAppointment);
-        }
 
-        private void aptTimeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // temp remove the duration ComboBox event to avoid infinite loop
-            //durationComboBox.SelectedIndexChanged -= durationComboBox_SelectedIndexChanged;
-
-            //AppointmentUtils.SetApptDurationComboBoxVals2(durationComboBox, aptTimeComboBox, appointments, selectedDate);
-
-            //// reattach
-            //durationComboBox.SelectedIndexChanged += durationComboBox_SelectedIndexChanged;
-        }
 
         private void exitBtn_Click(object sender, EventArgs e)
         {

@@ -1,49 +1,52 @@
 ﻿using c969_scheduler_program.Models;
 using c969_scheduler_program.Utils;
 using c969_scheduler_program.Validators;
-using Google.Protobuf.WellKnownTypes;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace c969_scheduler_program
 {
     public partial class AddAppointment : Form
     {
+        private bool _isFormLoaded = false;
         private DateTime selectedDate;
         private List<Appointment> appointments;
         private int prevDurationIdx = -1;
-
 
         public AddAppointment(DateTime date)
         {
             InitializeComponent();
             selectedDate = date;
             appointments = Appointment.GetAppointmentsForUserByDate(User.CurrentUserId, selectedDate);
-            AppointmentUtils2.SetApptTimesComboBox(30, aptTimeComboBox, selectedDate, appointments);
-            SetDefaultAptComboValue();
-            AppointmentUtils2.SetInitDurationVals(durationComboBox);
+            AppointmentUtils.SetApptTimesComboBox(30, aptTimeComboBox, selectedDate, appointments);//set initial values for aptComboBox
+            SetDefaultAptComboValue();//pick apt combo box to the first value by default
+            AppointmentUtils.SetInitDurationVals(durationComboBox); // set initial durationComboBox vals
             this.Load += AddAppointment_Load;
         }
+        private void AddAppointment_Load(object sender, EventArgs e)
+        {
+            dateLbl.Text = $"Date: {selectedDate.ToShortDateString()}";
+            InitializeInputEvents();
+            AppointmentUtils.SetSelectedDateApptsDgvHelper(appointments, apptDgv);//populate appointments dgv
+            AppointmentUtils.SetCustomerComboBoxVals(customerComboBox); //populate customer dropdown
+            AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);
+            AppointmentUtils.SetDurationComboBox(durationComboBox, aptTimeComboBox, selectedDate);
+            _isFormLoaded = true;
+        }
+
         private void InitializeInputEvents()
         {
             nameTxt.TextChanged += SharedInputChanged;
             typeTxt.TextChanged += SharedInputChanged;
             locationTxt.TextChanged += SharedInputChanged;
         }
+
         private void SharedInputChanged(object sender, EventArgs e)//connect inputs into shared listener
         {
             AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);
         }
-        private void AddAppointment_Load(object sender, EventArgs e)
-        {
-            dateLbl.Text = $"Date: {selectedDate.ToShortDateString()}";
-            InitializeInputEvents();
-            SetSelectedDateApptsDgv();
-            AppointmentValidator.ValidateAppointment(nameTxt, typeTxt, locationTxt);
-        }
+
         private void SetDefaultAptComboValue()
         {
             if (aptTimeComboBox.Items.Count > 0)
@@ -51,17 +54,16 @@ namespace c969_scheduler_program
                 aptTimeComboBox.SelectedIndex = 0;
             }
         }
-        private void SetSelectedDateApptsDgv() //populate dgv
-        {
-            AppointmentUtils.SetSelectedDateApptsDgvHelper(appointments, apptDgv);
-        }
+
         private void durationComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AppointmentUtils2.UpdateApptTimesOnDurationChange(durationComboBox, aptTimeComboBox, prevDurationIdx, selectedDate, appointments);
+            if (!_isFormLoaded) return;
+            AppointmentUtils.UpdateApptTimesOnDurationChange(durationComboBox, aptTimeComboBox, prevDurationIdx, selectedDate, appointments);
         }
         private void aptTimeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AppointmentUtils2.SetDurationComboBox(durationComboBox, aptTimeComboBox, selectedDate);
+            if (!_isFormLoaded) return;
+            AppointmentUtils.SetDurationComboBox(durationComboBox, aptTimeComboBox, selectedDate);
         }
         private void submitBtn_Click(object sender, EventArgs e)
         {

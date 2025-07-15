@@ -82,6 +82,12 @@ namespace c969_scheduler_program.Utils
             DateTime selectedSlotTime = selectedDate.Date.Add(timePart.TimeOfDay);
             return selectedSlotTime;
         }
+        public static int CalculateDurationMinutes(DateTime start, DateTime end)
+        {
+            TimeSpan difference = end - start;
+            int durationMinutes = (int)difference.TotalMinutes;
+            return durationMinutes;
+        }
 
     }
 }
