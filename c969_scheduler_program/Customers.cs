@@ -51,7 +51,12 @@ namespace c969_scheduler_program
             var confirm = MessageBox.Show("Are you sure you want to delete this customer?", "Confirm", MessageBoxButtons.YesNo);
             if (confirm == DialogResult.Yes)
             {
-                bool success = Customer.DeleteCustomer(customerId);
+                Customer currCustomer = Customer.GetCustomerById(customerId);
+                if (currCustomer == null)
+                {
+                    return;
+                }
+                bool success = Customer.DeleteCustomer(customerId, currCustomer.AddressId);
                 if (success)
                 {
                     MessageBox.Show("Customer deleted successfully.");

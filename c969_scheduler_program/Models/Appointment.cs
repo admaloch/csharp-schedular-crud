@@ -332,5 +332,28 @@ namespace c969_scheduler_program.Models
                 DBUtils.CloseConnection();
             }
         }
+        public static bool DeleteAppointmentsByCustomerId(int customerId)
+        {
+            try
+            {
+                DBUtils.OpenConnection();
+
+                using (var cmd = new MySqlCommand("DELETE FROM appointment WHERE customerId = @customerId", DBUtils.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@customerId", customerId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error deleting appointments: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                DBUtils.CloseConnection();
+            }
+            return true;
+        }
     }
 }

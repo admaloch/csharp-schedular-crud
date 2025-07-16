@@ -191,41 +191,58 @@ namespace c969_scheduler_program.Models
             return customer;
         }
 
-        public static bool DeleteCustomer(int customerId)
+        public static bool DeleteCustomer(int customerId, int addressId)
+        {
+            // Step 1: Delete all appointments for the customer
+            bool deleteApptRes = Appointment.DeleteAppointmentsByCustomerId(customerId);
+            if (!deleteApptRes)
+            {
+                MessageBox.Show("Failed to delete appointments.");
+                return false;
+            }
+
+            // Step 2: Delete the customer
+            bool deleteCustomerRes = DeleteCustomerHelper(customerId);
+            if (!deleteCustomerRes)
+            {
+                MessageBox.Show("Failed to delete customer.");
+                return false;
+            }
+
+            // Step 3: Delete the address
+            bool deleteAddressRes = DeleteAddress(addressId);
+            if (!deleteAddressRes)
+            {
+                MessageBox.Show("Failed to delete address.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool DeleteCustomerHelper(int customerId)
         {
             try
             {
                 DBUtils.OpenConnection();
 
-                // Step 1: Get the addressId linked to the customer
-                int addressId = -1;
-                using (var getCmd = new MySqlCommand("SELECT addressId FROM Customer WHERE customerId = @customerId", DBUtils.GetConnection()))
+                using (var cmd = new MySqlCommand("DELETE FROM customer WHERE customerId = @customerId", DBUtils.GetConnection()))
                 {
-                    getCmd.Parameters.AddWithValue("@customerId", customerId);
-                    object result = getCmd.ExecuteScalar();
-                    if (result == null || !int.TryParse(result.ToString(), out addressId))
-                    {
-                        return false;
-                    }
-                }
-
-                // Step 2: Delete the address; the customer will be deleted automatically due to ON DELETE CASCADE
-                using (var delCmd = new MySqlCommand("DELETE FROM Address WHERE addressId = @addressId", DBUtils.GetConnection()))
-                {
-                    delCmd.Parameters.AddWithValue("@addressId", addressId);
-                    int rowsAffected = delCmd.ExecuteNonQuery();
-                    return rowsAffected > 0;
+                    cmd.Parameters.AddWithValue("@customerId", customerId);
+                    cmd.ExecuteNonQuery();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error deleting customer/address: " + ex.Message);
+                MessageBox.Show("Error deleting customer: " + ex.Message);
                 return false;
             }
             finally
             {
                 DBUtils.CloseConnection();
             }
+            return true;
+
         }
 
         public static bool UpdateCustomer(Customer customer)
@@ -529,6 +546,30 @@ namespace c969_scheduler_program.Models
             return newCustomerId; // Return the ID of the new customer, or -1 if it failed
         }
 
+        private static bool DeleteAddress(int addressId)
+        {
+            try
+            {
+                DBUtils.OpenConnection();
+
+                using (var cmd = new MySqlCommand("DELETE FROM address WHERE addressId = @addressId", DBUtils.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@addressId", addressId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error deleting address: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                DBUtils.CloseConnection();
+            }
+            return true;
+
+        }
 
     }
 }

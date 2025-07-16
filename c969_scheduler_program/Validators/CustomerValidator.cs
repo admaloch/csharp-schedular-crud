@@ -72,7 +72,7 @@ namespace c969_scheduler_program.Validators
             else
             {
                 // Regex: only digits and dashes allowed
-                bool phoneValid = Regex.IsMatch(phone, @"^\d{3}-\d{3}-\d{4}$");
+                bool phoneValid = Regex.IsMatch(phone, @"^\d[\d-]*\d$") && phone.Contains("-");
                 ValidationUtils.SetValidationState(phoneValid, phoneTxt);
 
                 if (!phoneValid)
