@@ -33,26 +33,18 @@ namespace c969_scheduler_program.Utils
                 return new List<DateTime>();  // Return empty list immediately
             }
 
-            // Adjust startTime if selectedDate is today
-            if (selectedDate.Date == DateTime.Today)
+            if (selectedDate.Date == DateTime.Today) // Check if selected date is today
             {
-                // Current time + 45 minutes buffer
-                DateTime now = DateTime.Now.AddMinutes(45);
+                DateTime now = DateTime.Now;
 
-                // Only adjust if current time + buffer is within business hours
-                if (now > startTime)
-                {
-                    // Round up to next half-hour mark
-                    int minutes = now.Minute;
-                    int roundedMinutes = minutes <= 30 ? 30 : 60;
-                    startTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0).AddMinutes(roundedMinutes);
+                // Calculate next available 30-minute slot
+                int minutesToAdd = 30 - (now.Minute % 30);
+                DateTime nextAvailable = now.AddMinutes(minutesToAdd);
 
-                    // Make sure startTime is not before 9 AM
-                    if (startTime < selectedDate.Date.AddHours(9))
-                        startTime = selectedDate.Date.AddHours(9);
+                // Round up to nearest half-hour (remove seconds/milliseconds)
+                nextAvailable = nextAvailable.AddSeconds(-nextAvailable.Second)
+                                            .AddMilliseconds(-nextAvailable.Millisecond);
 
-
-                }
             }
 
             //generate all possible appointment times
@@ -79,6 +71,7 @@ namespace c969_scheduler_program.Utils
             {
                 for (var i = 0; i < allPossibleTimes.Count; i++)
                 {
+                    Console.WriteLine($"all possible items:{allPossibleTimes[i]}");
                     //check if it is 4:30pm and remove... not possible since appts need to end at 5
                     if (allPossibleTimes[i].TimeOfDay == new TimeSpan(16, 30, 0))
                     {
@@ -87,12 +80,16 @@ namespace c969_scheduler_program.Utils
                     }
 
                     //if hte next val is not 30 mins in the future -- then 60 mins isn't possible for curr val
-                    DateTime nextVal = allPossibleTimes[i + 1];
-                    DateTime thirtyMinTestVal = allPossibleTimes[i].AddMinutes(30);
-                    if (nextVal != null && nextVal != thirtyMinTestVal)
+                    if (i < allPossibleTimes.Count - 1)
                     {
-                        allPossibleTimes.Remove(allPossibleTimes[i]);
+                        DateTime nextVal = allPossibleTimes[i + 1];
+                        DateTime thirtyMinTestVal = allPossibleTimes[i].AddMinutes(30);
+                        if (nextVal != null && nextVal != thirtyMinTestVal)
+                        {
+                            allPossibleTimes.Remove(allPossibleTimes[i]);
+                        }
                     }
+
                 }
             }
             return allPossibleTimes;
@@ -104,7 +101,7 @@ namespace c969_scheduler_program.Utils
         {
             var apptStartTimes = GetAvailableApptStartTimes(selectedDate, duration, appointments, modApptItem);
 
-            Console.WriteLine($"selected date is {selectedDate}");
+            //Console.WriteLine($"selected date is {selectedDate}");
 
             aptTimeComboBox.Items.Clear();
 
@@ -115,7 +112,7 @@ namespace c969_scheduler_program.Utils
 
             foreach (var time in apptStartTimes)
             {
-                Console.WriteLine(time.ToString("hh:mm tt"));
+                //Console.WriteLine(time.ToString("hh:mm tt"));
                 aptTimeComboBox.Items.Add(time.ToString("hh:mm tt"));
             }
         }
