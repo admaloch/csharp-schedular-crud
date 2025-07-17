@@ -1,27 +1,19 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using c969_scheduler_program;
+using System;
 using System.Windows.Forms;
 
-namespace c969_scheduler_program
+static class Program
 {
-    internal static class Program
+    [STAThread]
+    static void Main()
     {
-        [DllImport("kernel32.dll")]
-        private static extern bool AllocConsole();
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        Login loginForm = new Login();
+        if (loginForm.ShowDialog() == DialogResult.OK)
         {
-            AllocConsole(); // 👈 Allocate console BEFORE running the app
-            Console.WriteLine("Console initialized.");
-
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Login loginForm = new Login();
-            Application.Run(loginForm); // This blocks until login form closes
+            Application.Run(new Dashboard()); // Dashboard becomes root form
         }
     }
 }

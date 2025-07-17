@@ -1,9 +1,5 @@
-﻿using c969_scheduler_program.Models;
-using c969_scheduler_program.Utils; // for ValidationUtils, DBUtils, CurrentUser
-using MySql.Data.MySqlClient;
-using System;
+﻿using c969_scheduler_program.Utils; // for ValidationUtils, DBUtils, CurrentUser
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace c969_scheduler_program.Validators
@@ -35,26 +31,7 @@ namespace c969_scheduler_program.Validators
                 errors.Add("Password is required\nSe requiere contraseña.");
                 isValid = false;
             }
-            else
-            {
-                // Additional rules if not empty
-                if (password.Length < 6)
-                {
-                    errors.Add("Password must be at least 6 characters long\nLa contraseña debe tener al menos 6 caracteres.");
-                    passwordValid = false;
-                    isValid = false;
-                }
 
-                if (!password.Any(char.IsLetter) || !password.Any(char.IsDigit))
-                {
-                    errors.Add("Password must contain both letters and numbers\nLa contraseña debe contener letras y números.");
-                    passwordValid = false;
-                    isValid = false;
-                }
-
-                // Apply visual feedback again if needed
-                ValidationUtils.SetValidationState(passwordValid, passwordTxt);
-            }
 
             return (isValid, errors);
         }

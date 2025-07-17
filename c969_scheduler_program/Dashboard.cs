@@ -19,7 +19,6 @@ namespace c969_scheduler_program
         {
             InitializeValues();
             CreateApptReminderAlert();
-            Console.WriteLine($"curr user: {User.CurrentUserName}");
         }
 
         private void InitializeValues()
@@ -60,6 +59,11 @@ namespace c969_scheduler_program
         {
             MainReports frm = new MainReports();
             frm.Show();
+        }
+
+        private void logoutBtn_Click(object sender, EventArgs e)
+        {
+            Application.Restart(); // Restarts the whole app
         }
     }
 }

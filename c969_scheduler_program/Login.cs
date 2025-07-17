@@ -1,10 +1,7 @@
 ﻿
 using c969_scheduler_program.Validators;
 using c969_scheduler_program.Utils;
-
 using System;
-
-using System.Globalization;
 using System.Windows.Forms;
 using c969_scheduler_program.Models;
 
@@ -20,7 +17,7 @@ namespace c969_scheduler_program
         {
             InitializeComponent();
             this.Load += Login_Load;
-            this.Shown += Login_Shown;
+            //this.Shown += Login_Shown;
         }
         private void Login_Load(object sender, EventArgs e) // add parameters here
         {
@@ -39,7 +36,6 @@ namespace c969_scheduler_program
 
         private void loginBtn_Click(object sender, EventArgs e)
         {
-            // Step 1: Validate form inputs (username + password)
             var (isFormValid, formErrors) = LoginValidator.Validate(usernameTxt, passwordTxt);
             if (!isFormValid)
             {
@@ -47,9 +43,7 @@ namespace c969_scheduler_program
                 return;
             }
 
-            // Step 2: Try authenticating the user (DB auth + set CurrentUser)
             var (isUserAuthenticated, loginMsg) = DBUtils.TryLogin(usernameTxt.Text, passwordTxt.Text);
-
             MessageBox.Show(loginMsg, "Login Message", MessageBoxButtons.OK);
 
             if (!isUserAuthenticated)
@@ -57,12 +51,9 @@ namespace c969_scheduler_program
                 return;
             }
 
-            // Step 3: Open dashboard, close login when dashboard closes
             Logger.LogLogin(User.CurrentUserName);
-            this.Hide();
-            Dashboard frm = new Dashboard();
-            frm.FormClosed += (s, args) => this.Close(); // Closes login when dashboard exits
-            frm.Show();
+            this.DialogResult = DialogResult.OK; // Tells Program.cs to launch Dashboard
+            this.Close(); // Close the login form
         }
 
         private void Login_Shown(object sender, EventArgs e)

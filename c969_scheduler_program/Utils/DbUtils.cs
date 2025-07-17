@@ -1,6 +1,7 @@
 ﻿using c969_scheduler_program.Models;
 using MySql.Data.MySqlClient;
 using System;
+using System.Windows.Forms;
 
 namespace c969_scheduler_program.Utils
 {
@@ -69,5 +70,7 @@ namespace c969_scheduler_program.Utils
                 CloseConnection();
             }
         }
+
+
     }
 }
